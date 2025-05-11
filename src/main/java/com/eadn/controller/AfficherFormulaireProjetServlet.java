@@ -12,7 +12,7 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/views/projet.jsp")
+@WebServlet("/projet/formulaire")
 public class AfficherFormulaireProjetServlet extends HttpServlet {
 
     @Inject
@@ -34,6 +34,6 @@ public class AfficherFormulaireProjetServlet extends HttpServlet {
         req.setAttribute("comptes", comptes);
 
         // Rediriger vers la JSP
-        req.getRequestDispatcher("/views/projet.jsp").forward(req, resp);
+        req.getRequestDispatcher("/projet/formulaire").forward(req, resp);
     }
 }

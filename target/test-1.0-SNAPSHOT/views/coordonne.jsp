@@ -153,7 +153,7 @@
             <div class="container">
                 <div class="app-header">
                     <div class="breadcrumbs">
-                        <a href="${pageContext.request.contextPath}/dashboard">Accueil</a> / 
+                        <a href="${pageContext.request.contextPath}/views/home.jsp">Accueil</a> / 
                         <span>Profil</span>/ 
                         <span>Mes coordonnées</span>
                     </div>
@@ -161,107 +161,105 @@
                         <h1>Mes Coordonnées</h1>
                         <div class="header-actions">
                             <button class="btn-action" id="edit-btn">
-                                <span class="icon"><i class="fas fa-pen"></i></span> Modifier
+                                <span class="icon"><i class="fas fa-pen"></i></span> <span class="btn-text">Modifier</span>
                             </button>
                         </div>
                     </div>
                     <div class="header-divider"></div>
                 </div>
-
-                <div class="form-container">
-                    <div class="row">
-                        <!-- Colonne gauche - Informations -->
-                        <div class="col-left">
-                            <div class="form-section">
-                                <h4 class="section-title">Informations Personnelles</h4>
-                                <div class="input-group">
-                                    <label for="nom">Nom</label>
-                                    <input type="text" id="nom" name="nom" class="form-control" 
-                                          value="Derghal Chiraz" disabled>
-                                </div>
-                                <div class="input-group">
-                                    <label for="titre">Titre</label>
-                                    <input type="text" id="titre" name="titre" class="form-control" 
-                                          value="DEC" disabled>
-                                </div>
-                                <div class="input-group">
-                                    <label for="service">Service</label>
-                                    <input type="text" id="service" name="service" class="form-control" 
-                                          value="Finance" disabled>
-                                </div>
-                                <div class="input-group">
-                                    <label for="statut">Historique du statut</label>
-                                    <input type="text" id="statut" name="statut" class="form-control" 
-                                          value="Activated - 13/05/2019" disabled>
-                                </div>
-                                 <div class="input-group">
-                            <label for="disponibiliteFilter">Disponibilité</label>
-                            <select id="disponibiliteFilter" class="form-control">
-                                <option value="all">Tous</option>
-                                <option value="disponible">Disponible</option>
-                                <option value="partiel">Partiellement disponible</option>
-                                <option value="indisponible">Indisponible</option>
-                            </select>
-                        </div>
-                            </div>
-                            
-                            <div class="form-section">
-                                <h4 class="section-title">Coordonnées</h4>
-                                <div class="input-group">
-                                    <label for="email">Email</label>
-                                    <input type="email" id="email" name="email" class="form-control" 
-                                          value="derghal.chiraz@example.com" disabled>
-                                </div>
-                                <div class="input-group">
-                                    <label for="phone">Téléphone</label>
-                                    <input type="text" id="phone" name="phone" class="form-control" 
-                                          value="+1234567890" disabled>
-                                </div>
-                            </div>
-
-                            <div class="btn-container" id="buttons" style="display: none;">
-                                <button type="button" class="btn-secondary" onclick="cancelChanges()">Annuler</button>
-                                <button type="button" class="btn-primary" onclick="confirmChanges()">
-                                    <i class="fas fa-save"></i> Sauvegarder
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <!-- Colonne droite - Profil -->
-                        <div class="col-right">
-                            <div class="profile-card">
-                                <div class="profile-header">
-                                    <div class="profile-avatar">
-                                        <span id="profile-initials">DC</span>
+               <form id="coordonneesForm" action="${pageContext.request.contextPath}/coordonnee/save" method="post">
+                    <div class="form-container">
+                        <div class="row">
+                            <!-- Colonne gauche - Informations -->
+                            <div class="col-left">
+                                <div class="form-section">
+                                    <h4 class="section-title">Informations Personnelles</h4>
+                                    <div class="input-group">
+                                        <label for="nom">Nom</label>
+                                        <input type="text" id="nom" name="nom" class="form-control" 
+                                            value="${sessionScope.utilisateur.nom}" readonly>
                                     </div>
-                                    <div class="profile-info">
-                                        <h3 id="profile-name">Derghal Chiraz</h3>
-                                        <p id="profile-title">DEC</p>
+                                    <div class="input-group">
+                                        <label for="titre">Titre</label>
+                                        <input type="text" id="titre" name="titre" class="form-control" 
+                                            value="${sessionScope.utilisateur.titre}" readonly>
                                     </div>
-                                    
+                                    <div class="input-group">
+                                        <label for="service">Service</label>
+                                        <input type="text" id="service" name="service" class="form-control" 
+                                            value="${sessionScope.utilisateur.service}" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="statut">Historique du statut</label>
+                                        <input type="text" id="statut" name="statut" class="form-control" 
+                                            value="${sessionScope.utilisateur.statut}" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="disponibilite">Disponibilité</label>
+                                        <select id="disponibilite" name="disponibilite" class="form-control" readonly>
+                                            <option value="disponible" ${sessionScope.utilisateur.disponibilite == 'disponible' ? 'selected' : ''}>Disponible</option>
+                                            <option value="partiel" ${sessionScope.utilisateur.disponibilite == 'partiel' ? 'selected' : ''}>Partiellement disponible</option>
+                                            <option value="indisponible" ${sessionScope.utilisateur.disponibilite == 'indisponible' ? 'selected' : ''}>Indisponible</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 
-                               
-                                <div class="profile-actions">
-                                    <a href="#" class="profile-action" onclick="openEmail()">
-                                        <i class="fas fa-envelope"></i> Email
-                                    </a>
-                                    <a href="#" class="profile-action" onclick="openPhoneCall()">
-                                        <i class="fas fa-phone"></i> Téléphone
-                                    </a>
+                                <div class="form-section">
+                                    <h4 class="section-title">Coordonnées</h4>
+                                    <div class="input-group">
+                                        <label for="email">Email</label>
+                                        <input type="email" id="email" name="email" class="form-control" 
+                                            value="${sessionScope.utilisateur.email}" readonly>
+                                    </div>
+                                    <div class="input-group">
+                                        <label for="phone">Téléphone</label>
+                                        <input type="text" id="phone" name="phone" class="form-control" 
+                                            value="${sessionScope.utilisateur.phone}" readonly>
+                                    </div>
                                 </div>
-                                <div class="profile-links">
-                                    <a href="${pageContext.request.contextPath}/views/timesheet.jsp" class="profile-link">
-                                        <i class="fas fa-clock"></i> Mes feuilles de temps
-                                    </a>
-                                    <a href="${pageContext.request.contextPath}/cv" class="profile-link">
-                                        <i class="fas fa-file-alt"></i> Mon CV
-                                    </a>
+
+                                <div class="btn-container" id="buttons" style="display: none;">
+                                    <button type="button" class="btn-secondary" id="cancel-btn">Annuler</button>
+                                    <button type="button" class="btn-primary" id="save-btn">
+                                        <i class="fas fa-save"></i> Sauvegarder
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Colonne droite - Profil -->
+                            <div class="col-right">
+                                <div class="profile-card">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar">
+                                            <span id="profile-initials">${sessionScope.utilisateur.initiales}</span>
+                                        </div>
+                                        <div class="profile-info">
+                                            <h3 id="profile-name">${sessionScope.utilisateur.nom}</h3>
+                                            <p id="profile-title">${sessionScope.utilisateur.titre}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="profile-actions">
+                                        <a href="#" class="profile-action" id="email-action">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </a>
+                                        <a href="#" class="profile-action" id="phone-action">
+                                            <i class="fas fa-phone"></i> Téléphone
+                                        </a>
+                                    </div>
+                                    <div class="profile-links">
+                                        <a href="${pageContext.request.contextPath}/views/timesheet.jsp" class="profile-link">
+                                            <i class="fas fa-clock"></i> Mes feuilles de temps
+                                        </a>
+                                        <a href="${pageContext.request.contextPath}/cv" class="profile-link">
+                                            <i class="fas fa-file-alt"></i> Mon CV
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+               </form>
             </div>
         </main>
     </div>
@@ -294,13 +292,15 @@
             flex: 1;
             padding: 0 15px;
             min-width: 60%;
+            width: 850px;
         }
         
         .col-right {
             width: 320px;
             padding: 0 15px;
+            position: absolute;
+            margin-left: 900px;
         }
-        
         .profile-card {
             background: white;
             border-radius: 10px;
@@ -451,6 +451,35 @@
             font-size: 14px;
         }
         
+        /* Modification sur place */
+        .form-control {
+            transition: all 0.3s ease;
+            background-color: #f9f9f9;
+        }
+        
+        .form-control:focus {
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            border-color: #007bff;
+        }
+        
+        .form-control[readonly] {
+            background-color: #f9f9f9;
+            cursor: default;
+            border: 1px solid #ddd;
+        }
+        
+        .form-control:not([readonly]) {
+            background-color: #fff;
+            cursor: text;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
         /* Responsive design */
         @media (max-width: 992px) {
             .row {
@@ -465,234 +494,401 @@
     </style>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Sidebar toggle
-            const sidebarToggle = document.createElement('button');
-            sidebarToggle.classList.add('sidebar-toggle');
-            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            document.querySelector('.main-header').prepend(sidebarToggle);
-            
-            sidebarToggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-open');
-            });
+    document.addEventListener('DOMContentLoaded', function() {
+    // Sidebar toggle
+    const sidebarToggle = document.createElement('button');
+    sidebarToggle.classList.add('sidebar-toggle');
+    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.querySelector('.main-header').prepend(sidebarToggle);
+    
+    sidebarToggle.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-open');
+    });
+    
+    // Sidebar collapse
+    const sidebarCollapse = document.getElementById('sidebar-collapse');
+    sidebarCollapse.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-collapsed');
+        setTimeout(() => {
+            window.dispatchEvent(new Event('resize'));
+        }, 300);
+    });
 
-            // Sidebar collapse
-            const sidebarCollapse = document.getElementById('sidebar-collapse');
-            sidebarCollapse.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-collapsed');
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
-
-            // User dropdown
-            const avatarTrigger = document.getElementById('avatar-trigger');
-            const userDropdown = document.getElementById('user-dropdown');
-            
-            avatarTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-            
-            document.addEventListener('click', function() {
-                userDropdown.classList.remove('show');
-            });
-            
-            // Toggle submenu
-            const submenus = document.querySelectorAll('.has-submenu');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    // Fermer tous les autres sous-menus
-                    submenus.forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            const subId = otherMenu.id.replace('-menu', '-submenu');
-                            const subMenu = document.getElementById(subId);
-                            subMenu.classList.remove('show');
-                            otherMenu.classList.remove('expanded');
-                        }
-                    });
-                    
-                    const subId = this.id.replace('-menu', '-submenu');
+    // User dropdown
+    const avatarTrigger = document.getElementById('avatar-trigger');
+    const userDropdown = document.getElementById('user-dropdown');
+    
+    avatarTrigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        userDropdown.classList.toggle('show');
+    });
+    
+    document.addEventListener('click', function() {
+        userDropdown.classList.remove('show');
+    });
+    
+    // Toggle submenu
+    const submenus = document.querySelectorAll('.has-submenu');
+    submenus.forEach(menu => {
+        menu.addEventListener('click', function(e) {
+            // Fermer tous les autres sous-menus
+            submenus.forEach(otherMenu => {
+                if (otherMenu !== menu) {
+                    const subId = otherMenu.id.replace('-menu', '-submenu');
                     const subMenu = document.getElementById(subId);
-                    subMenu.classList.toggle('show');
-                    this.classList.toggle('expanded');
-                    e.preventDefault();
-                });
+                    subMenu.classList.remove('show');
+                    otherMenu.classList.remove('expanded');
+                }
             });
+            
+            const subId = this.id.replace('-menu', '-submenu');
+            const subMenu = document.getElementById(subId);
+            subMenu.classList.toggle('show');
+            this.classList.toggle('expanded');
+            e.preventDefault();
+        });
+    });
 
-            // Animations sur survol
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('has-submenu')) {
-                        this.querySelector('i:first-child').classList.add('fa-beat');
+    // Animations sur survol
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            if (!this.classList.contains('has-submenu')) {
+                this.querySelector('i:first-child').classList.add('fa-beat');
+            }
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.querySelector('i:first-child').classList.remove('fa-beat');
+        });
+    });
+
+    // Toggle du thème clair/sombre
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', function() {
+        document.body.classList.toggle('dark-theme');
+        if (document.body.classList.contains('dark-theme')) {
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            // Stocker la préférence
+            localStorage.setItem('theme', 'dark');
+        } else {
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', 'light');
+        }
+    });
+    
+    // Appliquer le thème sauvegardé
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    // Variables globales pour stocker les valeurs originales et modifiées
+    let originalValues = {};
+    let currentValues = {}; // Nouvel objet pour stocker les valeurs actuelles
+    let isEditMode = false;
+
+    // Charger les valeurs du localStorage si disponibles
+    loadSavedValues();
+
+    // Bouton d'édition
+    const editBtn = document.getElementById('edit-btn');
+    const cancelBtn = document.getElementById('cancel-btn');
+    const saveBtn = document.getElementById('save-btn');
+    
+    editBtn.addEventListener('click', toggleEditMode);
+    cancelBtn.addEventListener('click', cancelChanges);
+    saveBtn.addEventListener('click', saveChanges);
+    
+    // Actions email et téléphone
+    document.getElementById('email-action').addEventListener('click', function(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        if (email) {
+            window.location.href = `mailto:${email}`;
+        }
+    });
+    
+    document.getElementById('phone-action').addEventListener('click', function(e) {
+        e.preventDefault();
+        const phone = document.getElementById('phone').value;
+        if (phone) {
+            window.location.href = `tel:${phone}`;
+        }
+    });
+    
+    // Toast notification
+    const toast = document.getElementById('toast-success');
+    const toastClose = document.querySelector('.toast-close');
+    
+    toastClose.addEventListener('click', function() {
+        toast.classList.remove('show');
+    });
+    
+    // Vérifier si un paramètre de succès est présent dans l'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('success') && urlParams.get('success') === 'true') {
+        // Afficher le toast de succès
+        toast.classList.add('show');
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 5000);
+        
+        // Sauvegarder l'état actuel du formulaire dans le localStorage après une sauvegarde réussie
+        saveFormState();
+    }
+    
+    // Mettre à jour les initiales du profil en fonction du nom
+    updateProfileInitials();
+    
+    // Suivre les changements dans les champs de formulaire
+    const inputs = document.querySelectorAll(".form-control");
+    inputs.forEach(input => {
+        input.addEventListener('change', function() {
+            if (isEditMode) {
+                currentValues[input.id] = input.value;
+                // Mettre à jour le localStorage à chaque changement
+                saveFormState();
+                
+                // Mettre à jour l'affichage du profil en temps réel
+                if (input.id === 'nom' || input.id === 'titre') {
+                    updateProfileDisplay();
+                }
+            }
+        });
+        
+        input.addEventListener('input', function() {
+            if (isEditMode) {
+                currentValues[input.id] = input.value;
+            }
+        });
+    });
+    
+    function toggleEditMode() {
+        if (!isEditMode) {
+            // Activer le mode édition
+            enterEditMode();
+        } else {
+            // Désactiver le mode édition
+            exitEditMode();
+        }
+    }
+    
+    function enterEditMode() {
+        const inputs = document.querySelectorAll(".form-control");
+        
+        // Sauvegarder les valeurs originales et rendre les champs éditables
+        inputs.forEach((input) => {
+            originalValues[input.id] = input.value;
+            currentValues[input.id] = input.value; // Initialiser les valeurs actuelles
+            input.readOnly = false;
+            input.classList.add("editable");
+        });
+        
+        // Activer le select de disponibilité
+        document.getElementById('disponibilite').removeAttribute('readonly');
+        
+        // Afficher les boutons de sauvegarde et annulation
+        document.getElementById("buttons").style.display = "flex";
+        
+        // Changer l'apparence du bouton éditer
+        editBtn.querySelector(".icon").innerHTML = '<i class="fas fa-times"></i>';
+        editBtn.querySelector(".btn-text").textContent = " Fermer";
+        
+        isEditMode = true;
+    }
+    
+    function exitEditMode() {
+        // Rétablir les valeurs modifiées et désactiver l'édition
+        const inputs = document.querySelectorAll(".form-control");
+        inputs.forEach((input) => {
+            // Utiliser la valeur actuelle au lieu de l'originale
+            input.value = currentValues[input.id] || originalValues[input.id] || "";
+            input.readOnly = true;
+            input.classList.remove("editable");
+            input.classList.remove("error");
+        });
+        
+        // Remettre le select en mode readonly
+        document.getElementById('disponibilite').setAttribute('readonly', true);
+        
+        // Cacher les boutons de sauvegarde et annulation
+         document.getElementById('coordonneesForm').submit();
+        
+        // Réinitialiser le bouton d'édition
+        editBtn.querySelector(".icon").innerHTML = '<i class="fas fa-pen"></i>';
+        editBtn.querySelector(".btn-text").textContent = " Modifier";
+        
+        isEditMode = false;
+        
+        // Mettre à jour l'affichage après la sortie du mode édition
+        updateProfileDisplay();
+    }
+    
+    function cancelChanges() {
+        // Restaurer les valeurs originales
+        const inputs = document.querySelectorAll(".form-control");
+        inputs.forEach((input) => {
+            input.value = originalValues[input.id] || "";
+            currentValues[input.id] = originalValues[input.id] || ""; // Mettre à jour les valeurs actuelles
+        });
+        
+        // Mettre à jour le localStorage avec les valeurs originales
+        saveFormState();
+        
+        exitEditMode();
+    }
+    
+    function saveChanges() {
+        let valid = true;
+        const inputs = document.querySelectorAll(".form-control");
+        
+        // Validation des champs
+        inputs.forEach((input) => {
+            if (input.value.trim() === "") {
+                input.classList.add('error');
+                input.classList.add('shake');
+                setTimeout(() => input.classList.remove('shake'), 500);
+                valid = false;
+            } else {
+                input.classList.remove('error');
+                // Mettre à jour les valeurs actuelles
+                currentValues[input.id] = input.value;
+            }
+        });
+        
+        if (!valid) return;
+        
+        // Sauvegarder les valeurs actuelles dans localStorage avant la soumission
+        saveFormState();
+        
+        // Mettre à jour les données du profil dans la carte
+        updateProfileDisplay();
+        
+        // Soumettre le formulaire avec AJAX pour éviter le rechargement de la page
+        submitFormWithAjax();
+    }
+    
+    function submitFormWithAjax() {
+        const form = document.getElementById("coordonneesForm");
+        const formData = new FormData(form);
+        
+        // Créer une requête AJAX
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', form.action, true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                // Afficher le toast de succès
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+                
+                // Mettre à jour les valeurs originales pour correspondre aux nouvelles valeurs
+                Object.keys(currentValues).forEach(key => {
+                    originalValues[key] = currentValues[key];
+                });
+                
+                // Sortir du mode édition
+                exitEditMode();
+                
+                // Mettre à jour l'URL sans recharger la page
+                window.history.replaceState({}, '', window.location.pathname + '?success=true');
+            } else {
+                // Gérer les erreurs
+                alert('Une erreur est survenue lors de la sauvegarde. Veuillez réessayer.');
+            }
+        };
+        
+        xhr.onerror = function() {
+            alert('Une erreur de connexion est survenue. Veuillez réessayer.');
+        };
+        
+        xhr.send(formData);
+    }
+    
+    function updateProfileDisplay() {
+        // Mettre à jour le nom et le titre dans la carte de profil
+        document.getElementById("profile-name").textContent = document.getElementById("nom").value;
+        document.getElementById("profile-title").textContent = document.getElementById("titre").value;
+        
+        // Mettre à jour les initiales
+        updateProfileInitials();
+        
+        // Mettre à jour le header utilisateur
+        const userName = document.querySelector('.user-name');
+        if (userName) {
+            userName.textContent = document.getElementById("nom").value;
+        }
+        
+        const userFullname = document.querySelector('.user-fullname');
+        if (userFullname) {
+            const nom = document.getElementById("nom").value;
+            const prenom = document.getElementById("prenom") ? document.getElementById("prenom").value : "";
+            userFullname.textContent = `${nom} ${prenom}`.trim();
+        }
+        
+        const userInitials = document.querySelector('.user-avatar span');
+        if (userInitials) {
+            userInitials.textContent = getInitials(document.getElementById("nom").value);
+        }
+    }
+    
+    function updateProfileInitials() {
+        const nom = document.getElementById("nom").value || "";
+        const initials = getInitials(nom);
+        document.getElementById("profile-initials").textContent = initials;
+    }
+    
+    function getInitials(fullName) {
+        const parts = fullName.split(' ');
+        let initials = '';
+        
+        if (parts.length >= 2) {
+            initials = parts[0].charAt(0) + parts[1].charAt(0);
+        } else if (parts.length === 1 && parts[0].length > 0) {
+            initials = parts[0].charAt(0);
+        }
+        
+        return initials.toUpperCase();
+    }
+    
+    function saveFormState() {
+        // Sauvegarder l'état actuel du formulaire dans le localStorage
+        const formState = {};
+        document.querySelectorAll(".form-control").forEach((input) => {
+            formState[input.id] = input.value;
+        });
+        
+        localStorage.setItem('coordonneesFormState', JSON.stringify(formState));
+    }
+    
+    function loadSavedValues() {
+        // Charger les valeurs sauvegardées depuis le localStorage
+        const savedState = localStorage.getItem('coordonneesFormState');
+        if (savedState) {
+            try {
+                const formState = JSON.parse(savedState);
+                const inputs = document.querySelectorAll(".form-control");
+                
+                inputs.forEach((input) => {
+                    if (formState[input.id]) {
+                        input.value = formState[input.id];
+                        currentValues[input.id] = formState[input.id];
+                        originalValues[input.id] = formState[input.id];
                     }
                 });
                 
-                item.addEventListener('mouseleave', function() {
-                    this.querySelector('i:first-child').classList.remove('fa-beat');
-                });
-            });
-
-            // Toggle du thème clair/sombre
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                if (document.body.classList.contains('dark-theme')) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    // Stocker la préférence
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-            
-            // Appliquer le thème sauvegardé
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-
-            // Bouton d'édition
-            const editBtn = document.getElementById('edit-btn');
-            editBtn.addEventListener('click', toggleEdit);
-            
-            // Toast notification
-            const toast = document.getElementById('toast-success');
-            const toastClose = document.querySelector('.toast-close');
-            
-            toastClose.addEventListener('click', function() {
-                toast.classList.remove('show');
-            });
-            
-            // Initialiser les initiales du profil
-            updateProfileInitials();
-        });
-
-        // Variables globales pour stocker les valeurs originales
-        let originalValues = {};
-
-        function toggleEdit() {
-            const inputs = document.querySelectorAll(".form-control");
-            const buttons = document.getElementById("buttons");
-            const editBtn = document.getElementById("edit-btn");
-
-            // Si on entre en mode édition
-            if (inputs[0].disabled) {
-                // Sauvegarder les valeurs originales
-                inputs.forEach((input) => {
-                    originalValues[input.id] = input.value;
-                    input.disabled = false;
-                    input.classList.add("editable");
-                });
-                
-                buttons.style.display = "flex";
-                editBtn.querySelector("span.icon").innerHTML = '<i class="fas fa-times"></i>';
-                editBtn.querySelector("span.icon").nextSibling.textContent = " Annuler";
-            } 
-            // Si on quitte le mode édition
-            else {
-                cancelChanges();
+                // Mettre à jour l'affichage du profil avec les valeurs chargées
+                updateProfileDisplay();
+            } catch (e) {
+                console.error("Erreur lors du chargement des données sauvegardées:", e);
             }
         }
-
-        function confirmChanges() {
-            let valid = true;
-            const inputs = document.querySelectorAll(".form-control");
-            
-            // Vérifier que tous les champs sont remplis
-            inputs.forEach((input) => {
-                if (input.value.trim() === "") {
-                    input.classList.add('error');
-                    input.classList.add('shake');
-                    setTimeout(() => input.classList.remove('shake'), 500);
-                    valid = false;
-                } else {
-                    input.classList.remove('error');
-                }
-            });
-            
-            if (!valid) return;
-            
-            // Désactiver les champs et mettre à jour le profil
-            inputs.forEach((input) => {
-                input.disabled = true;
-                input.classList.remove("editable");
-            });
-            
-            document.getElementById("buttons").style.display = "none";
-            
-            // Réinitialiser le bouton d'édition
-            const editBtn = document.getElementById("edit-btn");
-            editBtn.querySelector("span.icon").innerHTML = '<i class="fas fa-pen"></i>';
-            editBtn.querySelector("span.icon").nextSibling.textContent = " Modifier";
-            
-            // Mettre à jour les informations du profil
-            updateProfile();
-            
-            // Afficher un message de succès
-            const toast = document.getElementById('toast-success');
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 5000);
-        }
-        
-        function cancelChanges() {
-            const inputs = document.querySelectorAll(".form-control");
-            
-            // Restaurer les valeurs originales
-            inputs.forEach((input) => {
-                if (originalValues[input.id]) {
-                    input.value = originalValues[input.id];
-                }
-                input.disabled = true;
-                input.classList.remove("editable");
-                input.classList.remove("error");
-            });
-            
-            document.getElementById("buttons").style.display = "none";
-            
-            // Réinitialiser le bouton d'édition
-            const editBtn = document.getElementById("edit-btn");
-            editBtn.querySelector("span.icon").innerHTML = '<i class="fas fa-pen"></i>';
-            editBtn.querySelector("span.icon").nextSibling.textContent = " Modifier";
-        }
-        
-        function updateProfile() {
-            // Mettre à jour le nom et le titre dans la carte de profil
-            document.getElementById("profile-name").textContent = document.getElementById("nom").value;
-            document.getElementById("profile-title").textContent = document.getElementById("titre").value;
-            
-            // Mettre à jour les initiales
-            updateProfileInitials();
-        }
-        
-        function updateProfileInitials() {
-            const nom = document.getElementById("nom").value;
-            const parts = nom.split(' ');
-            let initials = '';
-            
-            if (parts.length >= 2) {
-                initials = parts[0].charAt(0) + parts[1].charAt(0);
-            } else if (parts.length === 1) {
-                initials = parts[0].charAt(0);
-            }
-            
-            document.getElementById("profile-initials").textContent = initials.toUpperCase();
-        }
-        
-        function openEmail() {
-            let email = document.getElementById("email").value;
-            let emailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}`;
-            window.open(emailUrl, "_blank");
-        }
-
-        function openPhoneCall() {
-            let phone = document.getElementById("phone").value;
-            window.location.href = `tel:${phone}`;
-        }
+    }
+});
     </script>
 </body>
 </html>

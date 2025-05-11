@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : listeProjet
     Created on : 8 avr. 2025, 01:01:19
@@ -84,7 +85,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeProjet.jsp" class="active">
+                                <a href="${pageContext.request.contextPath}/projet/liste" class="active">
                                     <i class="fas fa-list"></i> Liste des projets
                                 </a>
                             </li>
@@ -164,10 +165,20 @@
                             <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/views/projet.jsp'">
                                 <span class="icon"><i class="fas fa-plus"></i></span> Ajouter un Projet
                             </button>
+                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/projet/liste'">
+                                <span class="icon"><i class="fas fa-sync"></i></span> Rafraîchir la liste
+                            </button>
                         </div>
                     </div>
                     <div class="header-divider"></div>
                 </div>
+
+                <!-- Message d'erreur (si présent) -->
+                <c:if test="${not empty errorMessage}">
+                    <div class="error-message">
+                        ${errorMessage}
+                    </div>
+                </c:if>
 
                 <!-- Filtres et recherche -->
                 <div class="filters-container">
@@ -179,18 +190,23 @@
                         <div class="filter-group">
                             <label for="statusFilter">Status:</label>
                             <select id="statusFilter" class="filter-select">
-                                <option value="all">Tous</option>
-                                <option value="progress">En cours</option>
-                                <option value="completed">Terminé</option>
-                                <option value="pending">En attente</option>
+                                <option value="tous">Tous</option>
+                                
+                                <option value="enCours" >En cours</option>
+                                <option value="terminée">Terminée</option>
+                                <option value="enAttente">En attente</option>
+                                <option value="clôturée" >Clôturée</option>
+                               
+                                    
+                               
                             </select>
                         </div>
                         <div class="filter-group">
                             <label for="responsableFilter">Responsable:</label>
                             <select id="responsableFilter" class="filter-select">
                                 <option value="all">Tous</option>
-                                <c:forEach var="user" items="${responsables}">
-                                    <option value="${user.id}">${user.nom} ${user.prenom}</option>
+                                <c:forEach var="utilisateur" items="${utilisateurs}">
+                                    <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
                                 </c:forEach>
                             </select>
                         </div>
@@ -227,488 +243,409 @@
                                         </td>
                                     </tr>
                                 </c:when>
-                                <c:otherwise>
-                                    <c:forEach var="projet" items="${projets}">
-                                        <tr class="projet-row" data-id="${projet.id}" data-status="${projet.status}" data-responsable="${projet.responsable.id}">
-                                            <td class="projet-name">
-                                                <a href="${pageContext.request.contextPath}/projet/details/${projet.id}">${projet.nom}</a>
-                                            </td>
-                                            <td>${projet.nomCourt}</td>
-                                            <td>${projet.responsable.nom} ${projet.responsable.prenom}</td>
-                                            <td>
-                                                <span class="status-badge status-${projet.status}">
-                                                    <c:choose>
-                                                        <c:when test="${projet.status eq 'progress'}">En cours</c:when>
-                                                        <c:when test="${projet.status eq 'completed'}">Terminé</c:when>
-                                                        <c:when test="${projet.status eq 'pending'}">En attente</c:when>
-                                                        <c:otherwise>${projet.status}</c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </td>
-                                            <td><fmt:formatDate value="${projet.dateDebut}" pattern="dd/MM/yyyy" /></td>
-                                            <td><fmt:formatDate value="${projet.dateFin}" pattern="dd/MM/yyyy" /></td>
-                                            <td class="budget"><fmt:formatNumber value="${projet.budget}" type="currency" currencySymbol="DA" /></td>
-                                            <td class="actions">
-                                                            <c:if test="${sessionScope.user.role == 'RESPONSABLE' && projet.status != 'VALIDATED'}">
-                                                                <button class="action-btn validate-btn" title="Valider" onclick="validateProject(${projet.id})">
-                                                                     <i class="fas fa-check"></i>
-                                                                </button>
-                                                            </c:if>
-         
-                                                <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/projet/edit/${projet.id}'">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${projet.id})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:otherwise>
+                              
+<c:otherwise>
+    <c:forEach var="projet" items="${projets}">
+        <tr class="projet-row" data-id="${projet.id}" data-status="${projet.status}">
+            <td class="projet-name">
+                <a href="${pageContext.request.contextPath}/projet/details/${projet.id}">${projet.nom}</a>
+            </td>
+            <td>${projet.nomCourt}</td>
+            <td class="projet-responsable">
+                 <option value="${utilisateur.id}" selected>${utilisateur.nom} ${utilisateur.prenom}</option>
+            </td>
+            <td>
+                <span class="status-badge ${projet.status}">
+                    ${projet.status}
+                </span>
+            </td>
+            <td><fmt:formatDate value="${projet.dateDebut}" pattern="dd/MM/yyyy" /></td>
+            <td><fmt:formatDate value="${projet.dateFin}" pattern="dd/MM/yyyy" /></td>
+            <td class="budget" type="currency" currencySymbol="DA">${projet.budget} </td>
+            <td class="actions">
+                <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/projet/details/${projet.id}'">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/projet/edit?id=${projet.id}'">
+                    <i class="fas fa-edit"></i>
+                </button>
+                 <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${projet.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </c:forEach>
+</c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
-                </div>
-
-                <!-- Pagination -->
-                <div class="pagination-container" id="pagination">
-                    <button class="pagination-arrow" id="prevPage" disabled>
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Dynamiquement généré par JavaScript -->
-                    </div>
-                    <button class="pagination-arrow" id="nextPage">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- Modal de confirmation de suppression -->
     <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Confirmer la suppression</h4>
-                <button class="close-modal" onclick="fermerModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-footer">
-                <form id="deleteForm" action="${pageContext.request.contextPath}/projet/delete" method="post">
-                    <input type="hidden" id="deleteProjectId" name="id">
-                    <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
-                    <button type="submit" class="btn-danger">Supprimer</button>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Notification toast -->
-    <div class="toast-container">
-        <div class="toast" id="toast-success">
-            <div class="toast-icon">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="toast-content">
-                <div class="toast-title">Succès!</div>
-                <div class="toast-message">${successMessage}</div>
-            </div>
-            <button class="toast-close">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4 class="modal-title">Confirmer la suppression</h4>
+            <button class="close-modal" onclick="fermerModal()">
                 <i class="fas fa-times"></i>
             </button>
         </div>
+        <div class="modal-body">
+            <p class="modal-text">Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <form id="deleteForm" action="${pageContext.request.contextPath}/projet/delete" method="post">
+                <input type="hidden" id="deleteProjetId" name="id">
+                <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
+                <button type="submit" class="btn-danger">Supprimer</button>
+            </form>
+        </div>
+    </div>
+</div>
     </div>
 
+    <!-- JavaScript pour la page -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Afficher le message de succès s'il existe
-            <c:if test="${not empty successMessage}">
-                document.getElementById('toast-success').classList.add('show');
-                setTimeout(() => {
-                    document.getElementById('toast-success').classList.remove('show');
-                }, 5000);
-            </c:if>
+            // Initialiser le menu déroulant utilisateur
+            initUserDropdown();
             
-            // Sidebar toggle
-            const sidebarToggle = document.createElement('button');
-            sidebarToggle.classList.add('sidebar-toggle');
-            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            document.querySelector('.main-header').prepend(sidebarToggle);
+            // Initialiser la barre latérale
+            initSidebar();
             
-            sidebarToggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-open');
-            });
-
-            // Sidebar collapse
-            const sidebarCollapse = document.getElementById('sidebar-collapse');
-            sidebarCollapse.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-collapsed');
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
-
-            // User dropdown
+            // Initialiser le toggle de thème
+            initThemeToggle();
+            
+            // Initialiser le tri des colonnes
+            initTableSorting();
+            
+            // Initialiser les filtres
+            initFiltering();
+            
+            // Initialiser la recherche
+            initSearch();
+            
+            // Initialiser la modale de suppression
+            initDeleteModal();
+        });
+        
+        /**
+         * Initialise le menu déroulant utilisateur
+         */
+        function initUserDropdown() {
             const avatarTrigger = document.getElementById('avatar-trigger');
             const userDropdown = document.getElementById('user-dropdown');
             
-            avatarTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
+            if (avatarTrigger && userDropdown) {
+                avatarTrigger.addEventListener('click', function() {
+                    userDropdown.classList.toggle('show');
+                });
+                
+                // Fermer le dropdown si on clique ailleurs
+                document.addEventListener('click', function(event) {
+                    if (!event.target.closest('#avatar-trigger') && !event.target.closest('#user-dropdown')) {
+                        userDropdown.classList.remove('show');
+                    }
+                });
+            }
+        }
+        
+        /**
+         * Initialise la barre latérale et les sous-menus
+         */
+        function initSidebar() {
+            // Toggle de la sidebar
+            const sidebarCollapse = document.getElementById('sidebar-collapse');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
             
-            document.addEventListener('click', function() {
-                userDropdown.classList.remove('show');
-            });
+            if (sidebarCollapse && sidebar && mainContent) {
+                sidebarCollapse.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                });
+            }
             
-            // Toggle submenu
-            const submenus = document.querySelectorAll('.has-submenu');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    // Fermer tous les autres sous-menus
-                    submenus.forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            const subId = otherMenu.id.replace('-menu', '-submenu');
-                            const subMenu = document.getElementById(subId);
-                            subMenu.classList.remove('show');
-                            otherMenu.classList.remove('expanded');
+            // Toggle des sous-menus
+            const menuItems = document.querySelectorAll('.nav-item.has-submenu');
+            
+            menuItems.forEach(function(item) {
+                item.addEventListener('click', function(e) {
+                    if (e.target === item || e.target.parentElement === item) {
+                        const submenu = item.nextElementSibling;
+                        const icon = item.querySelector('.submenu-icon');
+                        
+                        if (submenu && submenu.classList.contains('submenu')) {
+                            e.preventDefault();
+                            submenu.classList.toggle('show');
+                            icon.classList.toggle('rotated');
+                        }
+                    }
+                });
+            });
+        }
+        
+        /**
+         * Initialise le toggle de thème clair/sombre
+         */
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            
+            // Vérifier si un thème est déjà enregistré
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme) {
+                body.classList.add(currentTheme);
+                if (currentTheme === 'dark-theme') {
+                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                }
+            }
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', function() {
+                    body.classList.toggle('dark-theme');
+                    
+                    // Mettre à jour l'icône
+                    if (body.classList.contains('dark-theme')) {
+                        themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+                        localStorage.setItem('theme', 'dark-theme');
+                    } else {
+                        themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+                        localStorage.setItem('theme', '');
+                    }
+                });
+            }
+        }
+        
+        /**
+         * Initialise le tri des colonnes du tableau
+         */
+        function initTableSorting() {
+            const headers = document.querySelectorAll('.projects-table th.sortable');
+            
+            headers.forEach(function(header) {
+                header.addEventListener('click', function() {
+                    const column = this.getAttribute('data-sort');
+                    const currentDirection = this.classList.contains('asc') ? 'asc' : (this.classList.contains('desc') ? 'desc' : '');
+                    
+                    // Réinitialiser les autres en-têtes
+                    headers.forEach(h => {
+                        if (h !== this) {
+                            h.classList.remove('asc', 'desc');
                         }
                     });
                     
-                    const subId = this.id.replace('-menu', '-submenu');
-                    const subMenu = document.getElementById(subId);
-                    subMenu.classList.toggle('show');
-                    this.classList.toggle('expanded');
-                    e.preventDefault();
-                });
-            });
-
-            // Animations sur survol
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('has-submenu')) {
-                        this.querySelector('i:first-child').classList.add('fa-beat');
-                    }
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.querySelector('i:first-child').classList.remove('fa-beat');
-                });
-            });
-
-            // Toggle du thème clair/sombre
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                if (document.body.classList.contains('dark-theme')) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    // Stocker la préférence
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-            
-            // Appliquer le thème sauvegardé
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-            
-            // Toast notification
-            const toast = document.getElementById('toast-success');
-            const toastClose = document.querySelector('.toast-close');
-            
-            toastClose.addEventListener('click', function() {
-                toast.classList.remove('show');
-            });
-
-            // Gestion du tableau - Tri, filtrage et pagination
-            setupTableFiltering();
-            setupTableSorting();
-            setupPagination();
-        });
-
-        // Configuration du filtrage du tableau
-        function setupTableFiltering() {
-            const searchInput = document.getElementById('searchInput');
-            const statusFilter = document.getElementById('statusFilter');
-            const responsableFilter = document.getElementById('responsableFilter');
-            
-            // Fonction pour appliquer tous les filtres
-            function applyFilters() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const statusValue = statusFilter.value;
-                const responsableValue = responsableFilter.value;
-                
-                const rows = document.querySelectorAll('#projectsTableBody tr.projet-row');
-                
-                rows.forEach(row => {
-                    // Ne pas filtrer les lignes vides
-                    if (row.classList.contains('empty-table')) return;
-                    
-                    const projectName = row.querySelector('.projet-name').textContent.toLowerCase();
-                    const projectStatus = row.getAttribute('data-status');
-                    const projectResponsable = row.getAttribute('data-responsable');
-                    
-                    const matchesSearch = projectName.includes(searchTerm);
-                    const matchesStatus = statusValue === 'all' || projectStatus === statusValue;
-                    const matchesResponsable = responsableValue === 'all' || projectResponsable === responsableValue;
-                    
-                    row.style.display = (matchesSearch && matchesStatus && matchesResponsable) ? '' : 'none';
-                });
-                
-                // Réinitialiser la pagination après le filtrage
-                resetPagination();
-            }
-            
-            // Écouter les événements de saisie et de changement
-            searchInput.addEventListener('input', applyFilters);
-            statusFilter.addEventListener('change', applyFilters);
-            responsableFilter.addEventListener('change', applyFilters);
-        }
-
-        // Configuration du tri du tableau
-        function setupTableSorting() {
-            const headers = document.querySelectorAll('.sortable');
-            
-            headers.forEach(header => {
-                header.addEventListener('click', function() {
-                    const column = this.getAttribute('data-sort');
-                    const icon = this.querySelector('i');
-                    
-                    // Déterminer la direction du tri
-                    let direction = 'asc';
-                    if (icon.classList.contains('fa-sort-up')) {
-                        direction = 'desc';
-                    } else if (icon.classList.contains('fa-sort-down')) {
-                        direction = 'none';
-                    }
-                    
-                    // Réinitialiser toutes les icônes
-                    document.querySelectorAll('.sortable i').forEach(i => {
-                        i.className = 'fas fa-sort';
-                    });
-                    
-                    // Mettre à jour l'icône actuelle
-                    if (direction === 'asc') {
-                        icon.className = 'fas fa-sort-up';
-                    } else if (direction === 'desc') {
-                        icon.className = 'fas fa-sort-down';
+                    // Déterminer la direction
+                    let newDirection;
+                    if (currentDirection === '' || currentDirection === 'desc') {
+                        newDirection = 'asc';
+                        this.classList.remove('desc');
+                        this.classList.add('asc');
+                    } else {
+                        newDirection = 'desc';
+                        this.classList.remove('asc');
+                        this.classList.add('desc');
                     }
                     
                     // Trier le tableau
-                    sortTable(column, direction);
+                    sortTable(column, newDirection);
                 });
             });
         }
-
-        // Fonction pour trier le tableau
+        
+        /**
+         * Trie le tableau selon la colonne et la direction spécifiées
+         */
         function sortTable(column, direction) {
-            if (direction === 'none') return;
-            
             const tbody = document.getElementById('projectsTableBody');
-            const rows = Array.from(document.querySelectorAll('#projectsTableBody tr.projet-row'));
+            const rows = Array.from(tbody.querySelectorAll('tr.projet-row'));
             
-            // Ignorer si le tableau est vide
-            if (rows.length === 0 || rows[0].classList.contains('empty-table')) return;
+            // Si pas de lignes à trier, on s'arrête
+            if (rows.length === 0) return;
             
-            // Trier les lignes
-            rows.sort((a, b) => {
-                let valueA, valueB;
+            const sortedRows = rows.sort((a, b) => {
+                let aValue, bValue;
                 
-                // Récupérer les valeurs en fonction de la colonne
-                // Create column index mapping
-const columnIndices = {
-    'nom': 1,
-    'nomCourt': 2,
-    'responsable': 3,
-    'status': 4,
-    'dateDebut': 5,
-    'dateFin': 6
-};
-
-if (column === 'nom' || column === 'nomCourt') {
-    valueA = a.querySelector(`td:nth-child(${columnIndices[column]})`).textContent.trim().toLowerCase();
-    valueB = b.querySelector(`td:nth-child(${columnIndices[column]})`).textContent.trim().toLowerCase();
-} else if (column === 'responsable') {
-    valueA = a.querySelector(`td:nth-child(${columnIndices.responsable})`).textContent.trim().toLowerCase();
-    valueB = b.querySelector(`td:nth-child(${columnIndices.responsable})`).textContent.trim().toLowerCase();
-} else if (column === 'status') {
-    valueA = a.querySelector(`td:nth-child(${columnIndices.status})`).textContent.trim().toLowerCase();
-    valueB = b.querySelector(`td:nth-child(${columnIndices.status})`).textContent.trim().toLowerCase();
-} else if (column === 'dateDebut' || column === 'dateFin') {
-    const dateA = a.querySelector(`td:nth-child(${columnIndices[column]})`).textContent.trim();
-    const dateB = b.querySelector(`td:nth-child(${columnIndices[column]})`).textContent.trim();
-                    
-                    const [dayA, monthA, yearA] = dateA.split('/');
-                    const [dayB, monthB, yearB] = dateB.split('/');
-                    
-                    valueA = new Date(yearA, monthA - 1, dayA);
-                    valueB = new Date(yearB, monthB - 1, dayB);
-                } else if (column === 'budget') {
-                    // Extraire les nombres des valeurs de budget
-                    valueA = parseFloat(a.querySelector('td:nth-child(7)').textContent.replace(/[^0-9.-]+/g, ''));
-                    valueB = parseFloat(b.querySelector('td:nth-child(7)').textContent.replace(/[^0-9.-]+/g, ''));
+                // Déterminer les valeurs à comparer selon la colonne
+                switch(column) {
+                    case 'nom':
+                        aValue = a.querySelector('.projet-name a').textContent.trim().toLowerCase();
+                        bValue = b.querySelector('.projet-name a').textContent.trim().toLowerCase();
+                        break;
+                    case 'nomCourt':
+                        aValue = a.cells[1].textContent.trim().toLowerCase();
+                        bValue = b.cells[1].textContent.trim().toLowerCase();
+                        break;
+                    case 'responsable':
+                        aValue = a.cells[2].textContent.trim().toLowerCase();
+                        bValue = b.cells[2].textContent.trim().toLowerCase();
+                        break;
+                    case 'status':
+                        aValue = a.cells[3].textContent.trim().toLowerCase();
+                        bValue = b.cells[3].textContent.trim().toLowerCase();
+                        break;
+                    case 'dateDebut':
+                        // Convertir la date au format JJ/MM/AAAA en objet Date
+                        aValue = parseDate(a.cells[4].textContent.trim());
+                        bValue = parseDate(b.cells[4].textContent.trim());
+                        break;
+                    case 'dateFin':
+                        aValue = parseDate(a.cells[5].textContent.trim());
+                        bValue = parseDate(b.cells[5].textContent.trim());
+                        break;
+                    case 'budget':
+                        // Extraire la valeur numérique du budget
+                        aValue = parseFloat(a.cells[6].textContent.trim().replace(/[^\d,-]/g, '').replace(',', '.')) || 0;
+                        bValue = parseFloat(b.cells[6].textContent.trim().replace(/[^\d,-]/g, '').replace(',', '.')) || 0;
+                        break;
+                    default:
+                        return 0;
                 }
                 
                 // Comparer les valeurs
-                if (valueA < valueB) {
-                    return direction === 'asc' ? -1 : 1;
-                } else if (valueA > valueB) {
-                    return direction === 'asc' ? 1 : -1;
+                if (direction === 'asc') {
+                    return aValue < bValue ? -1 : (aValue > bValue ? 1 : 0);
+                } else {
+                    return aValue > bValue ? -1 : (aValue < bValue ? 1 : 0);
                 }
-                return 0;
             });
             
             // Réorganiser les lignes dans le tableau
-            rows.forEach(row => tbody.appendChild(row));
-            
-            // Réinitialiser la pagination après le tri
-            resetPagination();
+            sortedRows.forEach(row => tbody.appendChild(row));
         }
-
-        // Configuration de la pagination
-        function setupPagination() {
-            const itemsPerPage = 10;
-            let currentPage = 1;
+        
+        /**
+         * Initialise les filtres de la table
+         */
+        function initFiltering() {
+            const statusFilter = document.getElementById('statusFilter');
+            const responsableFilter = document.getElementById('responsableFilter');
             
-            const prevPageBtn = document.getElementById('prevPage');
-            const nextPageBtn = document.getElementById('nextPage');
-            const paginationNumbers = document.getElementById('paginationNumbers');
+            if (statusFilter) {
+                statusFilter.addEventListener('change', applyFilters);
+            }
             
-            function updatePagination() {
-                const rows = Array.from(document.querySelectorAll('#projectsTableBody tr.projet-row')).filter(row => 
-                    row.style.display !== 'none' && !row.classList.contains('empty-table')
-                );
+            if (responsableFilter) {
+                responsableFilter.addEventListener('change', applyFilters);
+            }
+        }
+        
+        /**
+         * Initialise la fonction de recherche
+         */
+        function initSearch() {
+            const searchInput = document.getElementById('searchInput');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', applyFilters);
+            }
+        }
+        
+        /**
+         * Applique les filtres à la table
+         */
+        function applyFilters() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const responsableFilter = document.getElementById('responsableFilter').value;
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            const rows = document.querySelectorAll('#projectsTableBody tr.projet-row');
+            let visibleCount = 0;
+            
+            rows.forEach(function(row) {
+                let showRow = true;
                 
-                const totalPages = Math.ceil(rows.length / itemsPerPage);
-                
-                // Mettre à jour les boutons de pagination
-                prevPageBtn.disabled = currentPage === 1;
-                nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-                
-                // Mettre à jour les numéros de page
-                paginationNumbers.innerHTML = '';
-                
-                // Pagination simplifiée pour un grand nombre de pages
-                if (totalPages > 7) {
-                    // Premières pages
-                    for (let i = 1; i <= 3; i++) {
-                        addPageNumber(i);
-                    }
-                    
-                    // Ellipsis si nécessaire
-                    if (currentPage > 4) {
-                        const ellipsis = document.createElement('span');
-                        ellipsis.className = 'pagination-ellipsis';
-                        ellipsis.textContent = '...';
-                        paginationNumbers.appendChild(ellipsis);
-                    }
-                    
-                    // Page actuelle et autour
-                    if (currentPage > 3 && currentPage < totalPages - 2) {
-                        addPageNumber(currentPage);
-                    }
-                    
-                    // Ellipsis si nécessaire
-                    if (currentPage < totalPages - 3) {
-                        const ellipsis = document.createElement('span');
-                        ellipsis.className = 'pagination-ellipsis';
-                        ellipsis.textContent = '...';
-                        paginationNumbers.appendChild(ellipsis);
-                    }
-                    
-                    // Dernières pages
-                    for (let i = totalPages - 2; i <= totalPages; i++) {
-                        if (i > 3) {
-                            addPageNumber(i);
-                        }
-                    }
-                } else {
-                    // Afficher toutes les pages si peu nombreuses
-                    for (let i = 1; i <= totalPages; i++) {
-                        addPageNumber(i);
+                // Filtre par statut
+                if (statusFilter !== 'all') {
+                    const rowStatus = row.querySelector('.status-badge').textContent.trim();
+                    if (rowStatus !== statusFilter) {
+                        showRow = false;
                     }
                 }
                 
-                // Afficher les lignes de la page actuelle
-                rows.forEach((row, index) => {
-                    row.style.display = (index >= (currentPage - 1) * itemsPerPage && index < currentPage * itemsPerPage) ? '' : 'none';
-                });
-                
-                // Afficher ou masquer la pagination
-                document.getElementById('pagination').style.display = totalPages <= 1 ? 'none' : 'flex';
-            }
-            
-            function addPageNumber(pageNum) {
-                const pageButton = document.createElement('button');
-                pageButton.className = 'pagination-number' + (pageNum === currentPage ? ' active' : '');
-                pageButton.textContent = pageNum;
-                pageButton.addEventListener('click', () => {
-                    currentPage = pageNum;
-                    updatePagination();
-                });
-                paginationNumbers.appendChild(pageButton);
-            }
-            
-            // Navigation de page
-            prevPageBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updatePagination();
+                // Filtre par responsable
+                if (responsableFilter !== 'all') {
+                    const rowResponsable = row.getAttribute('data-responsable');
+                    if (rowResponsable !== responsableFilter) {
+                        showRow = false;
+                    }
                 }
+                
+                // Recherche textuelle
+                if (searchTerm !== '') {
+                    const projectName = row.querySelector('.projet-name a').textContent.toLowerCase();
+                    const projectCode = row.cells[1].textContent.toLowerCase();
+                    const projectResponsable = row.cells[2].textContent.toLowerCase();
+                    
+                    if (!projectName.includes(searchTerm) && 
+                        !projectCode.includes(searchTerm) && 
+                        !projectResponsable.includes(searchTerm)) {
+                        showRow = false;
+                    }
+                }
+                
+                // Afficher ou masquer la ligne
+                row.style.display = showRow ? '' : 'none';
+                if (showRow) visibleCount++;
             });
             
-            nextPageBtn.addEventListener('click', () => {
-                const rows = Array.from(document.querySelectorAll('#projectsTableBody tr.projet-row')).filter(row => 
-                    row.style.display !== 'none' && !row.classList.contains('empty-table')
-                );
-                const totalPages = Math.ceil(rows.length / itemsPerPage);
-                
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updatePagination();
+            // Afficher un message si aucun résultat
+            const emptyRow = document.querySelector('.empty-table');
+            if (visibleCount === 0 && !emptyRow) {
+                const tbody = document.getElementById('projectsTableBody');
+                const newEmptyRow = document.createElement('tr');
+                newEmptyRow.className = 'empty-table dynamic';
+                newEmptyRow.innerHTML = `
+                    <td colspan="8">
+                        <div class="empty-state">
+                            <i class="fas fa-search"></i>
+                            <p>Aucun projet ne correspond à votre recherche</p>
+                            <button class="btn-secondary" onclick="resetFilters()">
+                                Réinitialiser les filtres
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(newEmptyRow);
+            } else if (visibleCount > 0) {
+                const dynamicEmptyRow = document.querySelector('.empty-table.dynamic');
+                if (dynamicEmptyRow) {
+                    dynamicEmptyRow.remove();
                 }
-            });
+            }
+        }
+        
+        /**
+         * Réinitialise les filtres
+         */
+        function resetFilters() {
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('responsableFilter').value = 'all';
+            document.getElementById('searchInput').value = '';
+            applyFilters();
+        }
+        
+        
+        
+        
+        /**
+         * Convertit une date au format JJ/MM/AAAA en objet Date
+         */
+        function parseDate(dateStr) {
+            if (!dateStr || dateStr.trim() === '') return new Date(0); // Date minimale pour les valeurs vides
             
-            // Initialiser la pagination
-            updatePagination();
-        }
-
-        // Réinitialiser la pagination
-        function resetPagination() {
-            currentPage = 1;
-            setupPagination();
-        }
-        function validateProject(projectId) {
-    if (confirm('Êtes-vous sûr de vouloir valider ce projet ?')) {
-        fetch(`${pageContext.request.contextPath}/projet/validate/${projectId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            const parts = dateStr.split('/');
+            if (parts.length === 3) {
+                // Format JJ/MM/AAAA -> AAAA-MM-JJ pour la création de l'objet Date
+                return new Date(parts[2], parts[1] - 1, parts[0]);
             }
-        })
-        .then(response => {
-            if (response.ok) {
-                location.reload();
-            } else {
-                alert('Erreur lors de la validation du projet');
-            }
-        });
-    }
-}
-
-        // Ouvrir le modal de confirmation de suppression
+            return new Date(0); // Date par défaut si format invalide
+        }
+      // Ouvrir le modal de confirmation de suppression
         function confirmerSuppression(id) {
-            document.getElementById('deleteProjectId').value = id;
+            document.getElementById('deleteProjetId').value = id;
             document.getElementById('deleteModal').classList.add('show');
         }
 
@@ -716,6 +653,40 @@ if (column === 'nom' || column === 'nomCourt') {
         function fermerModal() {
             document.getElementById('deleteModal').classList.remove('show');
         }
+        // Ajouter cette fonction dans votre script
+function supprimerProjet() {
+    const id = document.getElementById('deleteProjetId').value;
+    
+    fetch('${pageContext.request.contextPath}/projet/liste', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=delete&id=' + id
+    })
+    .then(response => response.json())
+    .then(data => {
+        fermerModal();
+        if (data.success) {
+            // Supprimer la ligne du tableau ou rafraîchir la page
+            const row = document.querySelector(`.projet-row[data-id="${id}"]`);
+            if (row) row.remove();
+            
+            // Afficher un message de succès
+            alert(data.message);
+            
+            // Rafraîchir la pagination si nécessaire
+            resetPagination();
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    })
+    .catch(error => {
+        fermerModal();
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la suppression.');
+    });
+}
     </script>
 </body>
 </html>

@@ -1,8 +1,4 @@
-<%-- 
-    Document   : listeRessources
-    Created on : 9 avr. 2025, 23:58:23
-    Author     : L13
---%>
+
 
 <%-- 
     Document   : roussoures
@@ -128,7 +124,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeRessources" class="active">
+                                <a href="${pageContext.request.contextPath}/ressource/liste" class="active">
                                     <i class="fas fa-users-cog"></i> liste des employés
                                 </a>
                             </li>
@@ -169,6 +165,9 @@
                             <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/views/ressources.jsp'">
                                 <span class="icon"><i class="fas fa-plus"></i></span> Ajouter une Ressource
                             </button>
+                                 <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/ressource/liste'">
+                                <span class="icon"><i class="fas fa-sync"></i></span> Rafraîchir la liste
+                            </button>
                         </div>
                     </div>
                     <div class="header-divider"></div>
@@ -182,7 +181,7 @@
                     </div>
                     <div class="filter-options">
                         <div class="filter-group">
-                            <label for="departementFilter">Service:</label>
+                            <label for="service">Service:</label>
                             <select id="departementFilter" class="filter-select">
                                 <option value="all">Tous</option>
                                 <option value="informatique">Informatique</option>
@@ -193,7 +192,7 @@
                             </select>
                         </div>
                         <div class="filter-group">
-                            <label for="disponibiliteFilter">Disponibilité:</label>
+                            <label for="disponibilite">Disponibilité:</label>
                             <select id="disponibiliteFilter" class="filter-select">
                                 <option value="all">Tous</option>
                                 <option value="disponible">Disponible</option>
@@ -210,12 +209,12 @@
                         <thead>
                             <tr>
                                 <th class="sortable" data-sort="nom">Nom <i class="fas fa-sort"></i></th>
-                                <th class="sortable" data-sort="prenom">Prénom <i class="fas fa-sort"></i></th>
+                                <th class="sortable" data-sort="code">code <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="email">Email <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="departement">Service <i class="fas fa-sort"></i></th>
-                                <th class="sortable" data-sort="fonction">Titre <i class="fas fa-sort"></i></th>
+                                
                                 <th class="sortable" data-sort="disponibilite">Disponibilité <i class="fas fa-sort"></i></th>
-                                <th class="sortable" data-sort="tauxJournalier">Taux journalier <i class="fas fa-sort"></i></th>
+                                <th class="sortable" data-sort="salaire">Salaire <i class="fas fa-sort"></i></th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -235,40 +234,62 @@
                                     </tr>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:forEach var="ressource" items="${ressources}">
-                                        <tr class="ressource-row" data-id="${ressource.id}" data-departement="${ressource.departement}" data-disponibilite="${ressource.disponibilite}">
-                                            <td class="ressource-name">
-                                                <a href="${pageContext.request.contextPath}/ressource/details/${ressource.id}">${ressource.nom}</a>
-                                            </td>
-                                            <td>${ressource.prenom}</td>
-                                            <td>${ressource.email}</td>
-                                            <td>${ressource.departement}</td>
-                                            <td>${ressource.fonction}</td>
-                                            <td>
-                                                <span class="status-badge status-${ressource.disponibilite}">
-                                                    <c:choose>
-                                                        <c:when test="${ressource.disponibilite eq 'disponible'}">Disponible</c:when>
-                                                        <c:when test="${ressource.disponibilite eq 'partiel'}">Partiellement disponible</c:when>
-                                                        <c:when test="${ressource.disponibilite eq 'indisponible'}">Indisponible</c:when>
-                                                        <c:otherwise>${ressource.disponibilite}</c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </td>
-                                            <td class="taux-journalier"><fmt:formatNumber value="${ressource.tauxJournalier}" type="currency" currencySymbol="€" /></td>
-                                            <td class="actions">
-                                                <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/ressource/details/${ressource.id}'">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/ressource/edit/${ressource.id}'">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${ressource.id})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
-                                </c:otherwise>
+    <c:forEach var="ressource" items="${ressources}">
+        <c:set var="attrs" value="${attributsRessources[ressource.id]}" />
+        <tr class="ressource-row" data-id="${ressource.id}">
+            <td class="ressource-name">
+                <a href="${pageContext.request.contextPath}/ressource/details/${ressource.id}">${ressource.nom}</a>
+            </td>
+            <td>${ressource.code}</td>
+            <td>${ressource.email}</td>
+            <td>
+                <c:choose>
+                    <c:when test="${attrs.service eq 'informatique'}">
+                        <span class="badge badge-tech">Informatique</span>
+                    </c:when>
+                    <c:when test="${attrs.service eq 'commercial'}">
+                        <span class="badge badge-sales">Commercial</span>
+                    </c:when>
+                    <c:when test="${attrs.service eq 'rh'}">
+                        <span class="badge badge-hr">RH</span>
+                    </c:when>
+                    <c:when test="${attrs.service eq 'finance'}">
+                        <span class="badge badge-finance">Finance</span>
+                    </c:when>
+                    <c:when test="${attrs.service eq 'marketing'}">
+                        <span class="badge badge-marketing">Marketing</span>
+                    </c:when>
+                    <c:otherwise>
+                        <span class="badge badge-other">${ressource.branche}</span>
+                    </c:otherwise>
+                </c:choose>
+            </td>
+            
+            <td>
+                <span class="status-badge status-${attrs.disponibilite}">
+                    <c:choose>
+                        <c:when test="${attrs.disponibilite eq 'disponible'}">Disponible</c:when>
+                        <c:when test="${attrs.disponibilite eq 'partiel'}">Partiellement disponible</c:when>
+                        <c:when test="${attrs.disponibilite eq 'indisponible'}">Indisponible</c:when>
+                        <c:otherwise>${attrs.disponibilite}</c:otherwise>
+                    </c:choose>
+                </span>
+            </td>
+            <td><fmt:formatNumber value="${ressource.salaire}" type="currency" currencySymbol="DA" /></td>
+            <td class="actions">
+                <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/ressource/details/${ressource.id}'">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/ressource/edit/${ressource.id}'">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${ressource.id})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        </tr>
+    </c:forEach>
+</c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
@@ -280,7 +301,7 @@
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Dynamiquement généré par JavaScript -->
+                       
                     </div>
                     <button class="pagination-arrow" id="nextPage">
                         <i class="fas fa-chevron-right"></i>
@@ -533,11 +554,11 @@
                 // Créer un mappage des index de colonnes
                 const columnIndices = {
                     'nom': 1,
-                    'prenom': 2,
+                    'code': 2,
                     'email': 3,
-                    'departement': 4,
-                    'fonction': 5,
-                    'disponibilite': 6
+                    'service': 4,
+                    
+                    'disponibilite': 5
                 };
                 
                 // Récupérer les valeurs en fonction de la colonne
@@ -693,6 +714,40 @@
         function fermerModal() {
             document.getElementById('deleteModal').classList.remove('show');
         }
+        // Ajouter cette fonction dans votre script
+function supprimerRessource() {
+    const id = document.getElementById('deleteResourceId').value;
+    
+    fetch('${pageContext.request.contextPath}/ressource/liste', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=delete&id=' + id
+    })
+    .then(response => response.json())
+    .then(data => {
+        fermerModal();
+        if (data.success) {
+            // Supprimer la ligne du tableau ou rafraîchir la page
+            const row = document.querySelector(`.ressource-row[data-id="${id}"]`);
+            if (row) row.remove();
+            
+            // Afficher un message de succès
+            alert(data.message);
+            
+            // Rafraîchir la pagination si nécessaire
+            resetPagination();
+        } else {
+            alert('Erreur: ' + data.message);
+        }
+    })
+    .catch(error => {
+        fermerModal();
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la suppression.');
+    });
+}
     </script>
 </body>
 </html>

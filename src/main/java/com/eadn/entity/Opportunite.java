@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "opportunites")
+@Table(name = "opportunite")
 public class Opportunite implements Serializable {
 
     @Id
@@ -14,19 +14,19 @@ public class Opportunite implements Serializable {
     private Long id;
 
     // Informations client
-    private String nomEntreprise;
-    private String nomContact;
+    private String nom_entreprise;
+    private String nom_contact;
     private String telephone;
     private String email;
     private String adresse;
 
     // Détails opportunité
-    private String nomOpportunite;
+    private String nom_opportunite;
 
     @Column(length = 2000)
-    private String descriptionOpportunite;
+    private String description_opportunite;
 
-    private double budgetEstime;
+    private double budget_estime;
     private String status;
 
     // Planification
@@ -37,33 +37,38 @@ public class Opportunite implements Serializable {
     private Date dateFin;
 
     @Column(length = 2000)
-    private String objectifsPrincipaux;
+    private String objectifs_principaux;
 
     // Architecture
     @Column(length = 2000)
-    private String descriptionArchitecture;
+    private String description_architecture;
 
-    private String nomFichier;
+    private String nom_fichier;
 
     // Suivi interne
     private String responsable;
     private String membre1;
     private String membre2;
     private String membre3;
+    
+    
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateCreation;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dateModification;
 
-    // ✅ Constructeur par défaut requis par JPA
     public Opportunite() {}
 
-    // ✅ Constructeur personnalisé (facultatif)
-    public Opportunite(String nomOpportunite, String nomContact, String nomEntreprise, String status,
-                       String descriptionOpportunite, String objectifsPrincipaux, String nomFichier) {
-        this.nomOpportunite = nomOpportunite;
-        this.nomContact = nomContact;
-        this.nomEntreprise = nomEntreprise;
-        this.status = status;
-        this.descriptionOpportunite = descriptionOpportunite;
-        this.objectifsPrincipaux = objectifsPrincipaux;
-        this.nomFichier = nomFichier;
+    @PrePersist
+    protected void onCreate() {
+        dateCreation = new Date();
+    }
+    
+    @PreUpdate
+    protected void onUpdate() {
+        dateModification = new Date();
     }
 
     // Getters et Setters
@@ -75,20 +80,20 @@ public class Opportunite implements Serializable {
         this.id = id;
     }
 
-    public String getNomEntreprise() {
-        return nomEntreprise;
+    public String getNom_entreprise() {
+        return nom_entreprise;
     }
 
-    public void setNomEntreprise(String nomEntreprise) {
-        this.nomEntreprise = nomEntreprise;
+    public void setNom_entreprise(String nom_entreprise) {
+        this.nom_entreprise = nom_entreprise;
     }
 
-    public String getNomContact() {
-        return nomContact;
+    public String getNom_contact() {
+        return nom_contact;
     }
 
-    public void setNomContact(String nomContact) {
-        this.nomContact = nomContact;
+    public void setNom_contact(String nom_contact) {
+        this.nom_contact = nom_contact;
     }
 
     public String getTelephone() {
@@ -115,32 +120,43 @@ public class Opportunite implements Serializable {
         this.adresse = adresse;
     }
 
-    public String getNomOpportunite() {
-        return nomOpportunite;
+    public String getNom_opportunite() {
+        return nom_opportunite;
     }
 
-    public void setNomOpportunite(String nomOpportunite) {
-        this.nomOpportunite = nomOpportunite;
+    public void setNom_opportunite(String nom_opportunite) {
+        this.nom_opportunite = nom_opportunite;
     }
 
-    public String getDescriptionOpportunite() {
-        return descriptionOpportunite;
+    public String getDescription_opportunite() {
+        return description_opportunite;
     }
 
-    public void setDescriptionOpportunite(String descriptionOpportunite) {
-        this.descriptionOpportunite = descriptionOpportunite;
+    public void setDescription_opportunite(String description_opportunite) {
+        this.description_opportunite = description_opportunite;
+    }
+    
+    // Pour compatibilité
+    public String getDescription() {
+        return description_opportunite;
     }
 
-    public double getBudgetEstime() {
-        return budgetEstime;
+    public void setDescription(String description) {
+        this.description_opportunite = description;
     }
 
-    public void setBudgetEstime(double budgetEstime) {
-        this.budgetEstime = budgetEstime;
+    public double getBudget_estime() {
+        return budget_estime;
     }
 
+    public void setBudget_estime(double budget_estime) {
+        this.budget_estime = budget_estime;
+    }
+    
     public void setBudget(BigDecimal budget) {
-        this.budgetEstime = budget.doubleValue();
+        if (budget != null) {
+            this.budget_estime = budget.doubleValue();
+        }
     }
 
     public String getStatus() {
@@ -150,7 +166,7 @@ public class Opportunite implements Serializable {
     public void setStatus(String status) {
         this.status = status;
     }
-
+    
     public void setStatut(String statut) {
         this.status = statut;
     }
@@ -171,28 +187,28 @@ public class Opportunite implements Serializable {
         this.dateFin = dateFin;
     }
 
-    public String getObjectifsPrincipaux() {
-        return objectifsPrincipaux;
+    public String getObjectifs_principaux() {
+        return objectifs_principaux;
     }
 
-    public void setObjectifsPrincipaux(String objectifsPrincipaux) {
-        this.objectifsPrincipaux = objectifsPrincipaux;
+    public void setObjectifs_principaux(String objectifs_principaux) {
+        this.objectifs_principaux = objectifs_principaux;
     }
 
-    public String getDescriptionArchitecture() {
-        return descriptionArchitecture;
+    public String getDescription_architecture() {
+        return description_architecture;
     }
 
-    public void setDescriptionArchitecture(String descriptionArchitecture) {
-        this.descriptionArchitecture = descriptionArchitecture;
+    public void setDescription_architecture(String description_architecture) {
+        this.description_architecture= description_architecture;
     }
 
-    public String getNomFichier() {
-        return nomFichier;
+    public String getNom_fichier() {
+        return nom_fichier;
     }
 
-    public void setNomFichier(String nomFichier) {
-        this.nomFichier = nomFichier;
+    public void setNom_fichier(String nom_fichier) {
+        this.nom_fichier = nom_fichier;
     }
 
     public String getResponsable() {
@@ -226,13 +242,44 @@ public class Opportunite implements Serializable {
     public void setMembre3(String membre3) {
         this.membre3 = membre3;
     }
-
-    // Pour compatibilité avec ancien code (ex: JSF/Servlets)
-    public void setContact(String contact) {
-        this.nomContact = contact;
+    
+    
+    
+    
+    public Date getDateCreation() {
+        return dateCreation;
     }
 
-    public void setDescription(String description) {
-        this.descriptionOpportunite = description;
+    public void setDateCreation(Date dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    public Date getDateModification() {
+        return dateModification;
+    }
+
+    public void setDateModification(Date dateModification) {
+        this.dateModification = dateModification;
+    }
+    
+    // Pour compatibilité
+    public void setContact(String contact) {
+        this.nom_contact = contact;
+    }
+
+    public void setResponsable_id(Long responsableId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setMembre1_id(Long membre1Id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setMembre2_id(Long membre2Id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public void setMembre3_id(Long membre3Id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

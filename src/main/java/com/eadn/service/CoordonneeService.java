@@ -4,6 +4,7 @@ import com.eadn.entity.Coordonnee;
 import com.eadn.entity.Utilisateur;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Stateless
@@ -11,37 +12,31 @@ public class CoordonneeService {
 
     @PersistenceContext
     private EntityManager em;
-
-    // 🔹 Créer ou mettre à jour les coordonnées (upsert)
-    public Coordonnee saveOrUpdate(Coordonnee coordonnee) {
-        if (coordonnee.getId() == null) {
-            em.persist(coordonnee);
-            return coordonnee;
-        } else {
-            return em.merge(coordonnee);
-        }
+    
+    public void save(Coordonnee c) {
+        em.persist(c);
     }
-
-    // 🔹 Trouver par ID
+    
     public Coordonnee findById(Long id) {
         return em.find(Coordonnee.class, id);
     }
-
-    // 🔹 Supprimer
+    
+    public void update(Coordonnee c) {
+        em.merge(c);
+    }
+    
     public void delete(Long id) {
-        Coordonnee coordonnee = findById(id);
-        if (coordonnee != null) {
-            em.remove(coordonnee);
+        Coordonnee c = em.find(Coordonnee.class, id);
+        if (c != null) {
+            em.remove(c);
         }
     }
-
-    // 🔹 Lister toutes les coordonnées
+    
     public List<Coordonnee> findAll() {
         return em.createQuery("SELECT c FROM Coordonnee c", Coordonnee.class)
                  .getResultList();
     }
-
-    // 🔹 Trouver les coordonnées associées à un utilisateur
+    
     public Coordonnee findByUtilisateur(Utilisateur utilisateur) {
         try {
             return em.createQuery(
@@ -52,8 +47,19 @@ public class CoordonneeService {
             return null;
         }
     }
-
+    
     public Coordonnee findByUtilisateurId(Long id) {
+        try {
+            return em.createQuery(
+                    "SELECT c FROM Coordonnee c WHERE c.utilisateur.id = :id", Coordonnee.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    public Coordonnee findByRessourceId(Long id) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

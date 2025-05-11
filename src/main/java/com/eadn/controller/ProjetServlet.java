@@ -1,50 +1,81 @@
 package com.eadn.controller;
 
-
 import com.eadn.entity.Projet;
+import com.eadn.service.ProjetService;
+import jakarta.inject.Inject;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.*;
 
-import jakarta.ejb.Stateless;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.DELETE;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
-import java.util.List;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-@Stateless
-@Path("/projets")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-public class ProjetServlet {
-    
-    @PersistenceContext
-    private EntityManager entityManager;
+@WebServlet("/projet/save")
+public class ProjetServlet extends HttpServlet {
 
-    @POST
-    public Response creerProjet(Projet projet) {
-        entityManager.persist(projet);
-        return Response.status(Response.Status.CREATED).entity(projet).build();
-    }
+    @Inject
+    private ProjetService service;
 
-    @GET
-    public List<Projet> obtenirProjets() {
-        return entityManager.createQuery("SELECT p FROM Projet p", Projet.class).getResultList();
-    }
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-    @DELETE
-    @Path("/{id}")
-    public Response supprimerProjet(@PathParam("id") Long id) {
-        Projet projet = entityManager.find(Projet.class, id);
-        if (projet != null) {
-            entityManager.remove(projet);
-            return Response.ok().build();
+        try {
+            // Créer un nouvel objet Projet
+            Projet p = new Projet();
+            
+            // Informations de base
+            p.setNom(request.getParameter("nom"));
+            p.setNomCourt(request.getParameter("nomCourt"));
+            p.setDescription(request.getParameter("description"));
+            
+            //p.setResponsable(request.getParameter("responsable"));
+            p.setStatus(request.getParameter("status")); // Important: utiliser statut et non status
+            
+           
+            
+            // Valeurs numériques
+            String budgetStr = request.getParameter("budget");
+            if (budgetStr != null && !budgetStr.isEmpty()) {
+                p.setBudget(Double.parseDouble(budgetStr));
+            }
+            
+            // Dates
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            String dateDebutStr = request.getParameter("dateDebut");
+            if (dateDebutStr != null && !dateDebutStr.isEmpty()) {
+                p.setDateDebut(sdf.parse(dateDebutStr));
+            }
+            
+            String dateFinStr = request.getParameter("dateFin");
+            if (dateFinStr != null && !dateFinStr.isEmpty()) {
+                p.setDateFin(sdf.parse(dateFinStr));
+                
+                // Calculer la durée en jours
+                if (p.getDateDebut() != null && p.getDateFin() != null) {
+                    long diff = p.getDateFin().getTime() - p.getDateDebut().getTime();
+                    p.setDureeEnJours((int) (diff / (1000 * 60 * 60 * 24)));
+                }
+            }
+            
+           
+            
+            // Sauvegarde avec logs détaillés
+            System.out.println("Sauvegarde du projet: " + p.getNom());
+            service.save(p);
+            System.out.println("Projet sauvegardé avec ID: " + p.getId());
+            
+            // Message de succès et redirection
+            HttpSession session = request.getSession();
+            session.setAttribute("successMessage", "Projet enregistré avec succès !");
+            response.sendRedirect(request.getContextPath() + "/projet/liste");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Erreur lors de l'enregistrement du projet: " + e.getMessage());
+            request.setAttribute("errorMessage", "Erreur lors de l'enregistrement du projet: " + e.getMessage());
+            request.getRequestDispatcher("/views/projet.jsp").forward(request, response);
         }
-        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

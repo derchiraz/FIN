@@ -77,7 +77,7 @@
                         </a>
                         <ul class="submenu " id="project-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/projet.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=projet" >
                                     <i class="fas fa-plus-circle"></i> Ajouter projet
                                 </a>
                             </li>
@@ -97,7 +97,7 @@
                         </a>
                         <ul class="submenu show " id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp" class="active">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite" class="active">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>
@@ -173,7 +173,7 @@
                             <h4 class="section-title">Informations sur le Client</h4>
                             <div class="input-group">
                                 <label for="nom_entreprise">Nom entreprise</label>
-                                <input type="text" id="nom_entreprise" name="nom_entreprise" class="form-control" 
+                                <input type="text" id="nomEntreprise" name="nom_entreprise" class="form-control" 
                                       placeholder="Entrez le nom de l'entreprise" required>
                             </div>
                             <div class="input-group">
@@ -216,14 +216,14 @@
                                       placeholder="Montant..." required>
                             </div>
                             <div class="input-group">
-                                <label for="status">Statut</label>
+                                <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control" required>
-                                    <option value="">Sélectionnez un statut</option>
-                                    <option value="prospect" selected>Prospect</option>
-                                    <option value="negotiation">En négociation</option>
-                                    <option value="qualified">Qualifiée</option>
-                                    <option value="proposal">Proposition</option>
-                                    <option value="closed">Clôturée</option>
+                                    <option value="">Sélectionnez un status</option>
+                                    
+                                    <option value="enCours" >En cours</option>
+                                    <option value="terminée">Terminée</option>
+                                    <option value="enAttente">En attente</option>
+                                    <option value="clôturée" >Clôturée</option>
                                 </select>
                             </div>
                         </div>
@@ -269,26 +269,26 @@
                             <div id="fileList" class="file-list"></div>
                         </div>
                     </div>
+                    
 
                     <div class="form-container">
                         <div class="form-section">
                             <h4 class="section-title">Suivi Interne</h4>
-                            <div class="input-group">
-                                <label for="responsable">Responsable</label>
-                                <select id="responsable" name="responsable" class="form-control" required>
-                                    <option value="">Choisir...</option>
-                                    <option value="nom">Chiraz</option>
-                                    <c:forEach var="user" items="${responsables}">
-                                        <option value="${user.id}">${user.nom} ${user.prenom}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+                                <div class="input-group">
+                                    <label for="responsable">Responsable</label>
+                                       <select id="responsable" name="responsable" class="form-control" required>
+                                          <option value="">Choisir...</option>
+                                              <c:forEach var="utilisateur" items="${utilisateurs}">
+                                                 <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                              </c:forEach>
+                                        </select>
+                                </div>
                             <div class="input-group">
                                 <label for="membre1">Membre 1</label>
                                 <select id="membre1" name="membre1" class="form-control">
                                     <option value="">Choisir...</option>
-                                    <c:forEach var="user" items="${membres}">
-                                        <option value="${user.id}">${user.nom} ${user.prenom}</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -296,8 +296,8 @@
                                 <label for="membre2">Membre 2</label>
                                 <select id="membre2" name="membre2" class="form-control">
                                     <option value="">Choisir...</option>
-                                    <c:forEach var="user" items="${membres}">
-                                        <option value="${user.id}">${user.nom} ${user.prenom}</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -305,8 +305,8 @@
                                 <label for="membre3">Membre 3</label>
                                 <select id="membre3" name="membre3" class="form-control">
                                     <option value="">Choisir...</option>
-                                    <c:forEach var="user" items="${membres}">
-                                        <option value="${user.id}">${user.nom} ${user.prenom}</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
                                     </c:forEach>
                                 </select>
                             </div>
@@ -523,6 +523,112 @@
             document.querySelector('form').submit();
             return true;
         }
+        /**
+ * Opportunité management JavaScript
+ * Handles interactions for the opportunity listing, detail, and edit pages
+ */
+
+// Fonction pour confirmer la suppression d'une opportunité
+ function confirmerSuppression(id) {
+    document.getElementById('deleteId').value = id;
+    document.getElementById('deleteModal').style.display = 'flex';
+}
+
+// Fonction pour fermer la modal
+function fermerModal() {
+    document.getElementById('deleteModal').style.display = 'none';
+}
+
+// Validation du formulaire d'édition/création d'opportunité
+function validateForm() {
+    let isValid = true;
+    let errorMessage = "";
+    
+    // Récupérer les valeurs des champs
+    let dateDebut = document.getElementById('dateDebut')?.value;
+    let dateFin = document.getElementById('dateFin')?.value;
+    let budgetEstime = document.getElementById('budget_estime')?.value;
+    
+    // Validation du budget si le champ existe
+    if (budgetEstime !== undefined) {
+        if (parseFloat(budgetEstime) <= 0) {
+            errorMessage += "Le budget estimé doit être supérieur à 0\n";
+            isValid = false;
+        }
+    }
+    
+    // Validation des dates si les deux sont remplies
+    if (dateDebut && dateFin) {
+        let debut = new Date(dateDebut);
+        let fin = new Date(dateFin);
+        
+        if (fin < debut) {
+            errorMessage += "La date de fin ne peut pas être antérieure à la date de début\n";
+            isValid = false;
+        }
+    }
+    
+    if (!isValid) {
+        alert(errorMessage);
+    }
+    
+    return isValid;
+}
+
+// Au chargement du document
+document.addEventListener('DOMContentLoaded', function() {
+    // Gestion de la modal
+    window.onclick = function(event) {
+        let modal = document.getElementById('deleteModal');
+        if (modal && event.target == modal) {
+            fermerModal();
+        }
+    }
+    
+    // Gestion de la recherche et du filtrage pour la page liste
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const responsableFilter = document.getElementById('responsableFilter');
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterOpportunites);
+    }
+    
+    if (statusFilter) {
+        statusFilter.addEventListener('change', filterOpportunites);
+    }
+    
+    if (responsableFilter) {
+        responsableFilter.addEventListener('change', filterOpportunites);
+    }
+    
+    function filterOpportunites() {
+        if (!searchInput) return;
+        
+        const search = searchInput.value.toLowerCase();
+        const status = statusFilter ? statusFilter.value : 'all';
+        const responsable = responsableFilter ? responsableFilter.value : 'all';
+        
+        const rows = document.querySelectorAll('.opportunite-row');
+        
+        rows.forEach(row => {
+            const opportuniteName = row.querySelector('.opportunite-name')?.textContent.toLowerCase() || '';
+            const rowStatus = row.getAttribute('data-status') || '';
+            const rowResponsable = row.getAttribute('data-responsable') || '';
+            
+            const matchSearch = opportuniteName.includes(search);
+            const matchStatus = status === 'all' || rowStatus === status;
+            const matchResponsable = responsable === 'all' || rowResponsable === responsable;
+            
+            if (matchSearch && matchStatus && matchResponsable) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+});
+        
     </script>
 </body>
 </html>

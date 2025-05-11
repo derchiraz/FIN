@@ -9,6 +9,16 @@
 <head>
     <title>EADN Timex - Inscription</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/singup.css">
+    <style>
+        .error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -16,8 +26,15 @@
             <h1><span class="eadn">EADN</span> <span class="timex">Timex</span></h1>
             <h2>Enterprise d'Appui au Développement du Numérique</h2>
         </div>
+        
+        <!-- Message d'erreur si présent -->
+        <% if (request.getAttribute("errorMessage") != null) { %>
+            <div class="error-message">
+                <%= request.getAttribute("errorMessage") %>
+            </div>
+        <% } %>
 
-        <form action="signup" method="post">
+        <form action="${pageContext.request.contextPath}/signup" method="post">
             <div class="form-container">
                 <div class="form-section">
                     <h4 class="section-title">Informations Personnelles</h4>

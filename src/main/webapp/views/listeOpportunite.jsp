@@ -97,12 +97,12 @@
                         </a>
                         <ul class="submenu show" id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeOpportunite.jsp" class="active">
+                                <a href="${pageContext.request.contextPath}/opportunite/liste" class="active">
                                     <i class="fas fa-list"></i> Liste des opportunités
                                 </a>
                             </li>
@@ -158,10 +158,15 @@
                     </div>
                     <div class="header-top">
                         <h1>Liste des Opportunités</h1>
+                        
                         <div class="header-actions">
-                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/views/opportunite.jsp'">
-                                <span class="icon"><i class="fas fa-plus"></i></span> Ajouter une Opportunité
+                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/load-form-data?page=opportunite'">
+                              <span class="icon"><i class="fas fa-plus"></i></span> Ajouter une Opportunité
                             </button>
+                              <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/opportunite/liste'">
+        <span class="icon"><i class="fas fa-sync"></i></span> Rafraîchir la liste
+    </button>
+                            
                         </div>
                     </div>
                     <div class="header-divider"></div>
@@ -175,26 +180,17 @@
                     </div>
                     <div class="filter-options">
                         <div class="filter-group">
-                            <label for="statusFilter">Status:</label>
+                            <label for="status">Status:</label>
                             <select id="statusFilter" class="filter-select">
-                                <option value="all">Tous</option>
-                                <option value="new">Nouvelle</option>
-                                <option value="qualified">Qualifiée</option>
-                                <option value="proposal">Proposition</option>
-                                <option value="negotiation">Négociation</option>
-                                <option value="closed">Clôturée</option>
-                                <option value="lost">Perdue</option>
+                                <option value="tous">Tous</option>
+                                
+                                    <option value="enCours" >En cours</option>
+                                    <option value="terminée">Terminée</option>
+                                    <option value="enAttente">En attente</option>
+                                    <option value="clôturée" >Clôturée</option>
                             </select>
                         </div>
-                        <div class="filter-group">
-                            <label for="responsableFilter">Client:</label>
-                            <select id="responsableFilter" class="filter-select">
-                                <option value="all">Tous</option>
-                                <c:forEach var="client" items="${client}">
-                                    <option value="${client.id}">${client.nom} ${client.prenom}</option>
-                                </c:forEach>
-                            </select>
-                        </div>
+                       
                     </div>
                 </div>
 
@@ -221,7 +217,7 @@
                                             <div class="empty-state">
                                                 <i class="fas fa-lightbulb"></i>
                                                 <p>Aucune opportunité trouvée</p>
-                                                <button class="btn-secondary" onclick="location.href='${pageContext.request.contextPath}/views/opportunite.jsp'">
+                                                <button class="btn-secondary" onclick="location.href='${pageContext.request.contextPath}/load-form-data?page=opportunite'">
                                                     Ajouter une opportunité
                                                 </button>
                                             </div>
@@ -230,54 +226,46 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:forEach var="opportunite" items="${opportunites}">
-                                        <tr class="opportunite-row" data-id="${opportunite.id}" data-status="${opportunite.status}" data-client="${opportunite.client.id}">
-                                            <td class="opportunite-name">
-                                                <a href="${pageContext.request.contextPath}/opportunite/details/${opportunite.id}">${opportunite.nom}</a>
-                                            </td>
-                                            
-                                            <td>${opportunite.client.nom} ${opportunite.client.prenom}</td>
-                                            <td>
-                                                <span class="status-badge status-${opportunite.status}">
-                                                    <c:choose>
-                                                        <c:when test="${opportunite.status eq 'new'}">Nouvelle</c:when>
-                                                        <c:when test="${opportunite.status eq 'qualified'}">Qualifiée</c:when>
-                                                        <c:when test="${opportunite.status eq 'proposal'}">Proposition</c:when>
-                                                        <c:when test="${opportunite.status eq 'negotiation'}">Négociation</c:when>
-                                                        <c:when test="${opportunite.status eq 'closed'}">Clôturée</c:when>
-                                                        <c:when test="${opportunite.status eq 'lost'}">Perdue</c:when>
-                                                        <c:otherwise>${opportunite.status}</c:otherwise>
-                                                    </c:choose>
-                                                </span>
-                                            </td>
-                                            <td><fmt:formatDate value="${opportunite.dateDebut}" pattern="dd/MM/yyyy" /></td>
-                                            <td><fmt:formatDate value="${opportunite.dateFin}" pattern="dd/MM/yyyy" /></td>
-                                            <td class="montant"><fmt:formatNumber value="${opportunite.Budget}" type="currency" currencySymbol="DA" /></td>
-                                            <td class="actions">
-                                                <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/views/detailsOpporunite.jsp/${opportunite.id}'">
-                                                    <i class="fas fa-eye"></i>
-                                                </button>
-                                                <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/views/editOpporunite.jsp/${opportunite.id}'">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${opportunite.id})">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    </c:forEach>
+    <tr class="opportunite-row" data-id="${opportunite.id}" data-status="${opportunite.status}">
+        <td class="opportunite-name">
+            <a href="${pageContext.request.contextPath}/opportunite/details?id=${opportunite.id}">${opportunite.nom_opportunite}</a>
+        </td>
+        <td>${opportunite.nom_contact}</td>
+        <td>${opportunite.nom_entreprise}</td>
+        <td>
+            <span class="status-badge ${opportunite.status}">
+                ${opportunite.status}
+            </span>
+        </td>
+        <td><fmt:formatDate value="${opportunite.dateDebut}" pattern="dd/MM/yyyy" /></td>
+        <td><fmt:formatDate value="${opportunite.dateFin}" pattern="dd/MM/yyyy" /></td>
+        <td class="budget" type="currency" currencySymbol="DA">${opportunite.budget_estime} </td>
+        <td class="actions">
+    <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/opportunite/details?id=${opportunite.id}'">
+        <i class="fas fa-eye"></i>
+    </button>
+    <button class="action-btn edit-btn" title="Modifier" onclick="location.href='${pageContext.request.contextPath}/opportunite/edit?id=${opportunite.id}'">
+        <i class="fas fa-edit"></i>
+    </button>
+    <button class="action-btn delete-btn" title="Supprimer" onclick="confirmerSuppression(${opportunite.id})">
+        <i class="fas fa-trash"></i>
+    </button>
+</td>
+    </tr>
+</c:forEach>
                                 </c:otherwise>
                             </c:choose>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Pagination -->
+               <!-- Pagination -->
                 <div class="pagination-container" id="pagination">
                     <button class="pagination-arrow" id="prevPage" disabled>
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <div class="pagination-numbers" id="paginationNumbers">
-                        <!-- Dynamiquement généré par JavaScript -->
+                       
                     </div>
                     <button class="pagination-arrow" id="nextPage">
                         <i class="fas fa-chevron-right"></i>
@@ -287,27 +275,27 @@
         </main>
     </div>
 
-    <!-- Modal de confirmation de suppression -->
-    <div class="modal" id="deleteModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4>Confirmer la suppression</h4>
-                <button class="close-modal" onclick="fermerModal()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p>Êtes-vous sûr de vouloir supprimer cette opportunité ? Cette action est irréversible.</p>
-            </div>
-            <div class="modal-footer">
-                <form id="deleteForm" action="${pageContext.request.contextPath}/opportunite/delete" method="post">
-                    <input type="hidden" id="deleteOpportuniteId" name="id">
-                    <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
-                    <button type="submit" class="btn-danger">Supprimer</button>
-                </form>
-            </div>
+   <!-- Modal de confirmation de suppression pour les opportunités -->
+<div class="modal" id="deleteModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h4>Confirmer la suppression</h4>
+            <button class="close-modal" onclick="fermerModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir supprimer cette opportunité ? Cette action est irréversible.</p>
+        </div>
+        <div class="modal-footer">
+            <form id="deleteForm" action="${pageContext.request.contextPath}/opportunite/delete" method="post">
+                <input type="hidden" id="deleteOpportuniteId" name="id">
+                <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
+                <button type="submit" class="btn-danger">Supprimer</button>
+            </form>
         </div>
     </div>
+</div>
 
     <!-- Notification toast -->
     <div class="toast-container">
@@ -326,304 +314,422 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Afficher le message de succès s'il existe
-            <c:if test="${not empty successMessage}">
-                document.getElementById('toast-success').classList.add('show');
-                setTimeout(() => {
-                    document.getElementById('toast-success').classList.remove('show');
-                }, 5000);
-            </c:if>
-            
-            // Sidebar toggle
-            const sidebarToggle = document.createElement('button');
-            sidebarToggle.classList.add('sidebar-toggle');
-            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            document.querySelector('.main-header').prepend(sidebarToggle);
-            
-            sidebarToggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-open');
-            });
+       // Variables globales pour la pagination
+let currentPage = 1;
+const rowsPerPage = 10;
 
-            // Sidebar collapse
-            const sidebarCollapse = document.getElementById('sidebar-collapse');
-            sidebarCollapse.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-collapsed');
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
+document.addEventListener('DOMContentLoaded', function() {
+    // Afficher le message de succès s'il existe
+    if (document.getElementById('toast-success')) {
+        document.getElementById('toast-success').classList.add('show');
+        setTimeout(() => {
+            document.getElementById('toast-success').classList.remove('show');
+        }, 5000);
+    }
+    
+    // Sidebar toggle
+    const sidebarToggle = document.createElement('button');
+    sidebarToggle.classList.add('sidebar-toggle');
+    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
+    document.querySelector('.main-header')?.prepend(sidebarToggle);
+    
+    sidebarToggle.addEventListener('click', function() {
+        document.body.classList.toggle('sidebar-open');
+    });
 
-            // User dropdown
-            const avatarTrigger = document.getElementById('avatar-trigger');
-            const userDropdown = document.getElementById('user-dropdown');
-            
-            avatarTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-            
-            document.addEventListener('click', function() {
+    // Sidebar collapse
+    const sidebarCollapse = document.getElementById('sidebar-collapse');
+    if (sidebarCollapse) {
+        sidebarCollapse.addEventListener('click', function() {
+            document.body.classList.toggle('sidebar-collapsed');
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+            }, 300);
+        });
+    }
+
+    // User dropdown toggle
+    const avatarTrigger = document.getElementById('avatar-trigger');
+    const userDropdown = document.getElementById('user-dropdown');
+    
+    if (avatarTrigger && userDropdown) {
+        avatarTrigger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            userDropdown.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#user-dropdown') && !e.target.closest('#avatar-trigger')) {
                 userDropdown.classList.remove('show');
-            });
-            
-            // Toggle submenu
-            const submenus = document.querySelectorAll('.has-submenu');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    const subId = this.id.replace('-menu', '-submenu');
-                    const subMenu = document.getElementById(subId);
-                    subMenu.classList.toggle('show');
-                    this.classList.toggle('expanded');
-                    e.preventDefault();
-                });
-            });
-
-            // Configurations du tableau
-            setupTableFiltering();
-            setupTableSorting();
-            setupPagination();
-            
-            // Theme toggle
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
-                this.innerHTML = document.body.classList.contains('dark-theme') ? 
-                    '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-            });
-            
-            // Apply saved theme
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
         });
+    }
+    
+    // Toggle submenu
+    const submenus = document.querySelectorAll('.has-submenu');
+    submenus.forEach(menu => {
+        menu.addEventListener('click', function(e) {
+            const subId = this.id.replace('-menu', '-submenu');
+            const subMenu = document.getElementById(subId);
+            if (subMenu) {
+                subMenu.classList.toggle('show');
+                this.classList.toggle('expanded');
+                e.preventDefault();
+            }
+        });
+    });
 
-        // Configuration du filtrage
-        function setupTableFiltering() {
-            const searchInput = document.getElementById('searchInput');
-            const statusFilter = document.getElementById('statusFilter');
-            const responsableFilter = document.getElementById('responsableFilter');
+    // Configurations du tableau
+    setupTableFiltering();
+    setupTableSorting();
+    setupPagination();
+    
+    // Theme toggle
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-theme');
+            localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light');
+            if (document.body.classList.contains('dark-theme')) {
+                this.innerHTML = '<i class="fas fa-sun"></i>';
+            } else {
+                this.innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        });
+        
+        // Apply saved theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-theme');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+    }
+});
+
+// Configuration du filtrage
+function setupTableFiltering() {
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const responsableFilter = document.getElementById('responsableFilter');
+    
+    if (!searchInput || !statusFilter) return;
+    
+    function applyFilters() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const statusValue = statusFilter.value;
+        const responsableValue = responsableFilter ? responsableFilter.value : 'all';
+        
+        const rows = document.querySelectorAll('#opportunitesTableBody tr.opportunite-row');
+        
+        rows.forEach(row => {
+            if (row.classList.contains('empty-table')) return;
             
-            function applyFilters() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const statusValue = statusFilter.value;
-                const responsableValue = responsableFilter.value;
-                
-                const rows = document.querySelectorAll('#opportunitesTableBody tr.opportunite-row');
-                
-                rows.forEach(row => {
-                    if (row.classList.contains('empty-table')) return;
-                    
-                    const opportuniteName = row.querySelector('.opportunite-name').textContent.toLowerCase();
-                    const opportuniteStatus = row.getAttribute('data-status');
-                    const opportuniteResponsable = row.getAttribute('data-client');
-                    
-                    const matchesSearch = opportuniteName.includes(searchTerm);
-                    const matchesStatus = statusValue === 'all' || opportuniteStatus === statusValue;
-                    const matchesResponsable = responsableValue === 'all' || opportuniteResponsable === responsableValue;
-                    
-                    row.style.display = (matchesSearch && matchesStatus && matchesResponsable) ? '' : 'none';
-                });
-                
-                resetPagination();
+            const opportuniteName = row.querySelector('.opportunite-name')?.textContent.toLowerCase() || '';
+            const opportuniteStatus = row.getAttribute('data-status');
+            const opportuniteResponsable = row.getAttribute('data-client');
+            
+            const matchesSearch = opportuniteName.includes(searchTerm);
+            const matchesStatus = statusValue === 'all' || statusValue === 'tous' || opportuniteStatus === statusValue;
+            const matchesResponsable = responsableValue === 'all' || responsableValue === 'tous' || opportuniteResponsable === responsableValue;
+            
+            row.style.display = (matchesSearch && matchesStatus && matchesResponsable) ? '' : 'none';
+        });
+        
+        resetPagination();
+    }
+    
+    searchInput.addEventListener('input', applyFilters);
+    statusFilter.addEventListener('change', applyFilters);
+    if (responsableFilter) {
+        responsableFilter.addEventListener('change', applyFilters);
+    }
+}
+
+// Configuration du tri
+function setupTableSorting() {
+    const headers = document.querySelectorAll('.sortable');
+    
+    headers.forEach(header => {
+        header.addEventListener('click', function() {
+            const column = this.getAttribute('data-sort');
+            const icon = this.querySelector('i');
+            
+            document.querySelectorAll('.sortable i').forEach(i => {
+                i.className = 'fas fa-sort';
+            });
+            
+            let direction = 'asc';
+            if (icon.classList.contains('fa-sort-up')) {
+                direction = 'desc';
+                icon.className = 'fas fa-sort-down';
+            } else if (icon.classList.contains('fa-sort-down')) {
+                direction = 'none';
+                icon.className = 'fas fa-sort';
+            } else {
+                icon.className = 'fas fa-sort-up';
             }
             
-            searchInput.addEventListener('input', applyFilters);
-            statusFilter.addEventListener('change', applyFilters);
-            responsableFilter.addEventListener('change', applyFilters);
-        }
+            if (direction !== 'none') {
+                sortTable(column, direction);
+            }
+        });
+    });
+}
 
-        // Configuration du tri
-        function setupTableSorting() {
-            const headers = document.querySelectorAll('.sortable');
+function sortTable(column, direction) {
+    const tbody = document.getElementById('opportunitesTableBody');
+    if (!tbody) return;
+    
+    const rows = Array.from(tbody.querySelectorAll('tr.opportunite-row'));
+    
+    if (rows.length === 0 || rows[0].classList.contains('empty-table')) return;
+    
+    const sortedRows = rows.sort((a, b) => {
+        let aValue, bValue;
+        
+        if (column === 'nom') {
+            aValue = a.querySelector('.opportunite-name')?.textContent.trim().toLowerCase() || '';
+            bValue = b.querySelector('.opportunite-name')?.textContent.trim().toLowerCase() || '';
+        } else if (column === 'entreprise' || column === 'commercial') {
+            const columnIndex = column === 'entreprise' ? 2 : 3;
+            aValue = a.querySelectorAll('td')[columnIndex]?.textContent.trim().toLowerCase() || '';
+            bValue = b.querySelectorAll('td')[columnIndex]?.textContent.trim().toLowerCase() || '';
+        } else if (column === 'client') {
+            aValue = a.querySelectorAll('td')[1]?.textContent.trim().toLowerCase() || '';
+            bValue = b.querySelectorAll('td')[1]?.textContent.trim().toLowerCase() || '';
+        } else if (column === 'status') {
+            aValue = a.querySelectorAll('td')[3]?.textContent.trim().toLowerCase() || '';
+            bValue = b.querySelectorAll('td')[3]?.textContent.trim().toLowerCase() || '';
+        } else if (column === 'dateCreation' || column === 'dateCloture') {
+            const dateColumnIndex = column === 'dateCreation' ? 4 : 5;
+            const aDate = a.querySelectorAll('td')[dateColumnIndex]?.textContent.trim() || '';
+            const bDate = b.querySelectorAll('td')[dateColumnIndex]?.textContent.trim() || '';
             
-            headers.forEach(header => {
-                header.addEventListener('click', function() {
-                    const column = this.getAttribute('data-sort');
-                    const icon = this.querySelector('i');
-                    
-                    document.querySelectorAll('.sortable i').forEach(i => {
-                        i.className = 'fas fa-sort';
-                    });
-                    
-                    let direction = 'asc';
-                    if (icon.classList.contains('fa-sort-up')) {
-                        direction = 'desc';
-                        icon.className = 'fas fa-sort-down';
-                    } else if (icon.classList.contains('fa-sort-down')) {
-                        direction = 'none';
-                        icon.className = 'fas fa-sort';
-                    } else {
-                        icon.className = 'fas fa-sort-up';
-                    }
-                    
-                    if (direction !== 'none') {
-                        sortTable(column, direction);
-                    }
-                });
-            });
+            if (!aDate || aDate === '-') return direction === 'asc' ? 1 : -1;
+            if (!bDate || bDate === '-') return direction === 'asc' ? -1 : 1;
+            
+            const [aDay, aMonth, aYear] = aDate.split('/');
+            const [bDay, bMonth, bYear] = bDate.split('/');
+            
+            aValue = new Date(aYear, aMonth - 1, aDay);
+            bValue = new Date(bYear, bMonth - 1, bDay);
+        } else if (column === 'montant') {
+            aValue = parseFloat(a.querySelector('.budget')?.textContent.replace(/[^\d.-]/g, '')) || 0;
+            bValue = parseFloat(b.querySelector('.budget')?.textContent.replace(/[^\d.-]/g, '')) || 0;
+        } else {
+            return 0;
         }
+        
+        if (direction === 'asc') {
+            return aValue > bValue ? 1 : -1;
+        } else {
+            return aValue < bValue ? 1 : -1;
+        }
+    });
+    
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+    
+    sortedRows.forEach(row => {
+        tbody.appendChild(row);
+    });
+    
+    setupPagination();
+}
 
-        // Fonction de tri
-        function sortTable(column, direction) {
-            const tbody = document.getElementById('opportunitesTableBody');
-            const rows = Array.from(document.querySelectorAll('#opportunitesTableBody tr.opportunite-row'));
+// Configuration de la pagination améliorée
+function setupPagination() {
+    const rows = Array.from(document.querySelectorAll('#opportunitesTableBody tr.opportunite-row')).filter(row => 
+        window.getComputedStyle(row).display !== 'none' && !row.classList.contains('empty-table')
+    );
+    
+    const totalPages = Math.ceil(rows.length / rowsPerPage);
+    const paginationNumbers = document.getElementById('paginationNumbers');
+    const prevButton = document.getElementById('prevPage');
+    const nextButton = document.getElementById('nextPage');
+    
+    if (!paginationNumbers || !prevButton || !nextButton) return;
+    
+    // Réinitialiser pagination
+    paginationNumbers.innerHTML = '';
+    
+    // Créer les boutons de pagination
+    if (totalPages <= 7) {
+        // Afficher tous les numéros de page si il y a 7 pages ou moins
+        for (let i = 1; i <= totalPages; i++) {
+            addPageButton(i);
+        }
+    } else {
+        // Pagination avec ellipsis pour les grands nombres de pages
+        if (currentPage <= 4) {
+            // Premières pages
+            for (let i = 1; i <= 5; i++) {
+                addPageButton(i);
+            }
+            addEllipsis();
+            addPageButton(totalPages);
+        } else if (currentPage >= totalPages - 3) {
+            // Dernières pages
+            addPageButton(1);
+            addEllipsis();
+            for (let i = totalPages - 4; i <= totalPages; i++) {
+                addPageButton(i);
+            }
+        } else {
+            // Pages du milieu
+            addPageButton(1);
+            addEllipsis();
+            for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+                addPageButton(i);
+            }
+            addEllipsis();
+            addPageButton(totalPages);
+        }
+    }
+    
+    // État des boutons précédent/suivant
+    prevButton.disabled = currentPage === 1;
+    nextButton.disabled = currentPage === totalPages || totalPages === 0;
+    
+    // Assigner les fonctions de navigation
+    prevButton.onclick = function() {
+        if (currentPage > 1) {
+            goToPage(currentPage - 1);
+        }
+    };
+    
+    nextButton.onclick = function() {
+        if (currentPage < totalPages) {
+            goToPage(currentPage + 1);
+        }
+    };
+    
+    // Afficher ou masquer le conteneur de pagination
+    const paginationContainer = document.getElementById('pagination');
+    if (paginationContainer) {
+        paginationContainer.style.display = totalPages <= 1 ? 'none' : 'flex';
+    }
+    
+    // Afficher la page courante
+    showCurrentPage();
+}
+
+// Ajouter un bouton numéroté à la pagination
+function addPageButton(pageNum) {
+    const paginationNumbers = document.getElementById('paginationNumbers');
+    if (!paginationNumbers) return;
+    
+    const pageButton = document.createElement('button');
+    pageButton.className = 'pagination-number' + (pageNum === currentPage ? ' active' : '');
+    pageButton.textContent = pageNum;
+    pageButton.onclick = function() {
+        goToPage(pageNum);
+    };
+    paginationNumbers.appendChild(pageButton);
+}
+
+// Ajouter des ellipsis (points de suspension)
+function addEllipsis() {
+    const paginationNumbers = document.getElementById('paginationNumbers');
+    if (!paginationNumbers) return;
+    
+    const ellipsis = document.createElement('span');
+    ellipsis.className = 'pagination-ellipsis';
+    ellipsis.textContent = '...';
+    paginationNumbers.appendChild(ellipsis);
+}
+
+// Aller à une page spécifique
+function goToPage(pageNum) {
+    currentPage = pageNum;
+    showCurrentPage();
+    setupPagination(); // Mettre à jour les contrôles de pagination
+}
+
+// Afficher la page courante
+function showCurrentPage() {
+    const rows = Array.from(document.querySelectorAll('#opportunitesTableBody tr.opportunite-row')).filter(row => 
+        window.getComputedStyle(row).display !== 'none' && !row.classList.contains('empty-table')
+    );
+    
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = Math.min(startIndex + rowsPerPage, rows.length);
+    
+    // Masquer toutes les lignes
+    rows.forEach(row => {
+        row.style.display = 'none';
+    });
+    
+    // Afficher uniquement les lignes de la page courante
+    for (let i = startIndex; i < endIndex; i++) {
+        if (rows[i]) {
+            rows[i].style.display = '';
+        }
+    }
+}
+
+// Réinitialiser la pagination (après filtrage, tri, etc.)
+function resetPagination() {
+    currentPage = 1;
+    setupPagination();
+}
+
+// Ouvrir le modal de confirmation de suppression
+function confirmerSuppression(id) {
+    const deleteOpportuniteId = document.getElementById('deleteOpportuniteId');
+    const deleteModal = document.getElementById('deleteModal');
+    
+    if (deleteOpportuniteId && deleteModal) {
+        deleteOpportuniteId.value = id;
+        deleteModal.classList.add('show');
+    }
+}
+
+// Fermer le modal
+function fermerModal() {
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.classList.remove('show');
+    }
+}
+
+// Supprimer une opportunité
+function supprimerOpportunite() {
+    const deleteOpportuniteId = document.getElementById('deleteOpportuniteId');
+    if (!deleteOpportuniteId) return;
+    
+    const id = deleteOpportuniteId.value;
+    
+    fetch('${pageContext.request.contextPath}/opportunite/liste', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'action=delete&id=' + id
+    })
+    .then(response => response.json())
+    .then(data => {
+        fermerModal();
+        if (data.success) {
+            // Supprimer la ligne du tableau ou rafraîchir la page
+            const row = document.querySelector(`.opportunite-row[data-id="${id}"]`);
+            if (row) row.remove();
             
-            if (rows.length === 0 || rows[0].classList.contains('empty-table')) return;
+            // Afficher un message de succès
+            alert(data.message);
             
-            rows.sort((a, b) => {
-                let valueA, valueB;
-                
-                switch(column) {
-                    case 'nom':
-                        valueA = a.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-                        valueB = b.querySelector('td:nth-child(1)').textContent.trim().toLowerCase();
-                        break;
-                    case 'client':
-                        valueA = a.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-                        valueB = b.querySelector('td:nth-child(2)').textContent.trim().toLowerCase();
-                        break;
-                    case 'commercial':
-                        valueA = a.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-                        valueB = b.querySelector('td:nth-child(3)').textContent.trim().toLowerCase();
-                        break;
-                    case 'status':
-                        valueA = a.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-                        valueB = b.querySelector('td:nth-child(4)').textContent.trim().toLowerCase();
-                        break;
-                    case 'dateCreation':
-                    case 'dateCloture':
-                        const dateIndex = column === 'dateCreation' ? 5 : 6;
-                        const [dayA, monthA, yearA] = a.querySelector(`td:nth-child(${dateIndex})`).textContent.trim().split('/');
-                        const [dayB, monthB, yearB] = b.querySelector(`td:nth-child(${dateIndex})`).textContent.trim().split('/');
-                        valueA = new Date(yearA, monthA - 1, dayA);
-                        valueB = new Date(yearB, monthB - 1, dayB);
-                        break;
-                    case 'montant':
-                        valueA = parseFloat(a.querySelector('td:nth-child(7)').textContent.replace(/[^0-9.-]+/g, ''));
-                        valueB = parseFloat(b.querySelector('td:nth-child(7)').textContent.replace(/[^0-9.-]+/g, ''));
-                        break;
-                }
-                
-                if (valueA < valueB) return direction === 'asc' ? -1 : 1;
-                if (valueA > valueB) return direction === 'asc' ? 1 : -1;
-                return 0;
-            });
-            
-            rows.forEach(row => tbody.appendChild(row));
+            // Rafraîchir la pagination si nécessaire
             resetPagination();
+        } else {
+            alert('Erreur: ' + data.message);
         }
-
-        // Configuration de la pagination
-        function setupPagination() {
-            const itemsPerPage = 10;
-            let currentPage = 1;
-            
-            const prevPageBtn = document.getElementById('prevPage');
-            const nextPageBtn = document.getElementById('nextPage');
-            const paginationNumbers = document.getElementById('paginationNumbers');
-            
-            function updatePagination() {
-                const rows = Array.from(document.querySelectorAll('#opportunitesTableBody tr.opportunite-row')).filter(row => 
-                    row.style.display !== 'none' && !row.classList.contains('empty-table')
-                );
-                
-                const totalPages = Math.ceil(rows.length / itemsPerPage);
-                
-                prevPageBtn.disabled = currentPage === 1;
-                nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
-                
-                paginationNumbers.innerHTML = '';
-                
-                if (totalPages > 7) {
-                    for (let i = 1; i <= 3; i++) {
-                        addPageNumber(i);
-                    }
-                    
-                    if (currentPage > 4) {
-                        const ellipsis = document.createElement('span');
-                        ellipsis.className = 'pagination-ellipsis';
-                        ellipsis.textContent = '...';
-                        paginationNumbers.appendChild(ellipsis);
-                    }
-                    
-                    if (currentPage > 3 && currentPage < totalPages - 2) {
-                        addPageNumber(currentPage);
-                    }
-                    
-                    if (currentPage < totalPages - 3) {
-                        const ellipsis = document.createElement('span');
-                        ellipsis.className = 'pagination-ellipsis';
-                        ellipsis.textContent = '...';
-                        paginationNumbers.appendChild(ellipsis);
-                    }
-                    
-                    for (let i = totalPages - 2; i <= totalPages; i++) {
-                        if (i > 3) {
-                            addPageNumber(i);
-                        }
-                    }
-                } else {
-                    for (let i = 1; i <= totalPages; i++) {
-                        addPageNumber(i);
-                    }
-                }
-                
-                rows.forEach((row, index) => {
-                    row.style.display = (index >= (currentPage - 1) * itemsPerPage && index < currentPage * itemsPerPage) ? '' : 'none';
-                });
-                
-                document.getElementById('pagination').style.display = totalPages <= 1 ? 'none' : 'flex';
-            }
-            
-            function addPageNumber(pageNum) {
-                const pageButton = document.createElement('button');
-                pageButton.className = 'pagination-number' + (pageNum === currentPage ? ' active' : '');
-                pageButton.textContent = pageNum;
-                pageButton.addEventListener('click', () => {
-                    currentPage = pageNum;
-                    updatePagination();
-                });
-                paginationNumbers.appendChild(pageButton);
-            }
-            
-            prevPageBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updatePagination();
-                }
-            });
-            
-            nextPageBtn.addEventListener('click', () => {
-                const rows = Array.from(document.querySelectorAll('#opportunitesTableBody tr.opportunite-row')).filter(row => 
-                    row.style.display !== 'none' && !row.classList.contains('empty-table')
-                );
-                const totalPages = Math.ceil(rows.length / itemsPerPage);
-                
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updatePagination();
-                }
-            });
-            
-            updatePagination();
-        }
-
-        function resetPagination() {
-            currentPage = 1;
-            setupPagination();
-        }
-
-        function confirmerSuppression(id) {
-            document.getElementById('deleteOpportuniteId').value = id;
-            document.getElementById('deleteModal').classList.add('show');
-        }
-
-        function fermerModal() {
-            document.getElementById('deleteModal').classList.remove('show');
-        }
+    })
+    .catch(error => {
+        fermerModal();
+        console.error('Erreur:', error);
+        alert('Une erreur est survenue lors de la suppression.');
+    });
+}
     </script>
 </body>
 </html>

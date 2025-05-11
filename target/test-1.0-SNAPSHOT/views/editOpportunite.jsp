@@ -1,9 +1,8 @@
 <%-- 
-    Document   : edit
+    Document   : editOpportunite
     Created on : 13 avr. 2025, 22:43:23
     Author     : L13
 --%>
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -14,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Modifier une Opportunité</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/projet.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css ">
 </head>
 <body>
     <!-- Header principal -->
@@ -52,7 +51,6 @@
             </div>
         </div>
     </header>
-
     <!-- Layout principal avec sidebar et contenu -->
     <div class="main-layout">
         <!-- Sidebar -->
@@ -65,21 +63,20 @@
                             <span>Accueil</span>
                         </a>
                     </li>
-                    
                     <li>
-                        <a href="#" class="nav-item has-submenu" id="project-menu">
+                        <a href="#" class="nav-item has-submenu " id="project-menu">
                             <i class="fas fa-project-diagram"></i>
                             <span>Projets</span>
                             <i class="fas fa-chevron-right submenu-icon"></i>
                         </a>
-                        <ul class="submenu" id="project-submenu">
+                        <ul class="submenu " id="project-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/projet.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=projet">
                                     <i class="fas fa-plus-circle"></i> Ajouter projet
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeProjet.jsp">
+                                <a href="${pageContext.request.contextPath}/views/listeProjet.jsp" >
                                     <i class="fas fa-list"></i> Liste des projets
                                 </a>
                             </li>
@@ -93,12 +90,12 @@
                         </a>
                         <ul class="submenu show" id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeOpportunite.jsp" class="active">
+                                <a href="${pageContext.request.contextPath}/opportunite/liste" class="active">
                                     <i class="fas fa-list"></i> Liste des opportunités
                                 </a>
                             </li>
@@ -140,161 +137,188 @@
                 </div>
             </div>
         </aside>
-
         <!-- Contenu principal -->
         <main class="main-content" id="main-content">
             <div class="container">
                 <div class="app-header">
                     <div class="breadcrumbs">
                         <a href="${pageContext.request.contextPath}/views/home.jsp">Accueil</a> / 
-                        <a href="${pageContext.request.contextPath}/views/listeOpportunite.jsp">Lise des Opportunités</a> / 
-                        <span>Modifier</span>
+                        <a href="${pageContext.request.contextPath}/opportunite/liste">Liste des opportunités</a> / 
+                        <span>Modifier une opportunité</span>
                     </div>
                     <div class="header-top">
                         <h1>Modifier une Opportunité</h1>
                         <div class="header-actions">
-                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/views/detailsOpportunite.jsp ${opportunite.id}'">
-                                <span class="icon"><i class="fas fa-eye"></i></span> Voir Détails
+                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/opportunite/liste'">
+                                <span class="icon"><i class="fas fa-list"></i></span> Liste des Opportunités
+                            </button>
+                            <button class="btn-action" onclick="location.href='${pageContext.request.contextPath}/opportunite/details?id=${opportunite.id}'">
+                                <span class="icon"><i class="fas fa-eye"></i></span> Voir les détails
                             </button>
                         </div>
                     </div>
                     <div class="header-divider"></div>
                 </div>
-
-                <form action="${pageContext.request.contextPath}/opportunite/update" method="post" enctype="multipart/form-data" onsubmit="return validateForm(event)">
-                    <!-- Identifiant caché -->
-                    <input type="hidden" name="id" value="${opportunite.id}" />
-
+                <c:if test="${not empty errorMessage}">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> ${errorMessage}
+                    </div>
+                </c:if>
+                <form action="${pageContext.request.contextPath}/opportunite/update" method="post" onsubmit="return validateForm(event)">
+                    <input type="hidden" name="id" value="${opportunite.id}">
                     <div class="form-container">
                         <div class="form-section">
-                            <h4 class="section-title">Informations Client</h4>
+                            <h4 class="section-title">Informations sur le Client</h4>
                             <div class="input-group">
                                 <label for="nom_entreprise">Nom entreprise</label>
-                                <input type="text" id="nom_entreprise" name="nom_entreprise" value="${opportunite.nomEntreprise}" class="form-control" required>
+                                <input type="text" id="nom_entreprise" name="nom_entreprise" class="form-control" 
+                                      placeholder="Entrez le nom de l'entreprise" value="${opportunite.nom_entreprise}" required>
                             </div>
                             <div class="input-group">
-                                <label for="nom_contact">Nom contact</label>
-                                <input type="text" id="nom_contact" name="nom_contact" value="${opportunite.nomContact}" class="form-control" required>
+                                <label for="nom_contact">Nom du contact principal</label>
+                                <input type="text" id="nom_contact" name="nom_contact" class="form-control" 
+                                      placeholder="Nom et prénom du contact" value="${opportunite.nom_contact}" required>
                             </div>
                             <div class="input-group">
                                 <label for="telephone">Téléphone</label>
-                                <input type="text" id="telephone" name="telephone" value="${opportunite.telephone}" class="form-control">
+                                <input type="text" id="telephone" name="telephone" class="form-control" 
+                                      placeholder="Numéro de téléphone" value="${opportunite.telephone}">
                             </div>
                             <div class="input-group">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" name="email" value="${opportunite.email}" class="form-control">
+                                <input type="email" id="email" name="email" class="form-control" 
+                                      placeholder="Adresse email du contact" value="${opportunite.email}">
                             </div>
                             <div class="input-group">
                                 <label for="adresse">Adresse</label>
-                                <input type="text" id="adresse" name="adresse" value="${opportunite.adresse}" class="form-control">
+                                <input type="text" id="adresse" name="adresse" class="form-control" 
+                                      placeholder="Adresse complète" value="${opportunite.adresse}">
                             </div>
                         </div>
-
                         <div class="form-section">
-                            <h4 class="section-title">Détails</h4>
+                            <h4 class="section-title">Détails de l'Opportunité</h4>
                             <div class="input-group">
                                 <label for="nom_opportunite">Nom opportunité</label>
-                                <input type="text" id="nom_opportunite" name="nom_opportunite" value="${opportunite.nomOpportunite}" class="form-control" required>
+                                <input type="text" id="nom_opportunite" name="nom_opportunite" class="form-control" 
+                                      placeholder="Nom descriptif de l'opportunité" value="${opportunite.nom_opportunite}" required>
                             </div>
                             <div class="input-group">
-                                <label for="description_opportunite">Description</label>
-                                <textarea id="description_opportunite" name="description_opportunite" class="form-control" required>${opportunite.descriptionOpportunite}</textarea>
+                                <label for="description_opportunite">Description de l'opportunité</label>
+                                <textarea id="description_opportunite" name="description_opportunite" class="form-control" 
+                                         placeholder="Décrivez l'opportunité..." required>${opportunite.description_opportunite}</textarea>
                             </div>
                             <div class="input-group">
-                                <label for="budget_estime">Budget estimé</label>
-                                <input type="number" id="budget_estime" name="budget_estime" value="${opportunite.budgetEstime}" class="form-control" required>
+                                <label for="budget_estime">Budget estimé (DA)</label>
+                                <input type="number" id="budget_estime" name="budget_estime" class="form-control" 
+                                      placeholder="Montant..." value="${opportunite.budget_estime}" required>
                             </div>
                             <div class="input-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control" required>
-                                    <option value="new" ${opportunite.status == 'new' ? 'selected' : ''}>Nouvelle</option>
-                                    <option value="qualified" ${opportunite.status == 'qualified' ? 'selected' : ''}>Qualifiée</option>
-                                    <option value="proposal" ${opportunite.status == 'proposal' ? 'selected' : ''}>Proposition</option>
-                                    <option value="negotiation" ${opportunite.status == 'negotiation' ? 'selected' : ''}>Négociation</option>
-                                    <option value="closed" ${opportunite.status == 'closed' ? 'selected' : ''}>Clôturée</option>
-                                    <option value="lost" ${opportunite.status == 'lost' ? 'selected' : ''}>Perdue</option>
+                                    <option value="">Sélectionnez un status</option>
+                                    <option value="enCours" ${opportunite.status == 'enCours' ? 'selected' : ''}>En cours</option>
+                                    <option value="terminée" ${opportunite.status == 'terminée' ? 'selected' : ''}>Terminée</option>
+                                    <option value="enAttente" ${opportunite.status == 'enAttente' ? 'selected' : ''}>En attente</option>
+                                    <option value="clôturée" ${opportunite.status == 'clôturée' ? 'selected' : ''}>Clôturée</option>
                                 </select>
                             </div>
+                            
+                            
                         </div>
                     </div>
-
                     <div class="form-container">
                         <div class="form-section">
-                            <h4 class="section-title">Calendrier</h4>
+                            <h4 class="section-title">Planification</h4>
                             <div class="input-group">
-                                <label for="dateDebut">Date début</label>
+                                <label for="dateDebut">Date de début</label>
                                 <div class="date-input-wrapper">
-                                    <input type="date" id="dateDebut" name="dateDebut" value="<fmt:formatDate value='${opportunite.dateDebut}' pattern='yyyy-MM-dd' />" class="form-control" required>
+                                    <input type="date" id="dateDebut" name="dateDebut" class="form-control" 
+                                           value="<fmt:formatDate value="${opportunite.dateDebut}" pattern="yyyy-MM-dd"/>" required>
                                 </div>
                             </div>
                             <div class="input-group">
-                                <label for="dateFin">Date fin</label>
+                                <label for="dateFin">Date de fin</label>
                                 <div class="date-input-wrapper">
-                                    <input type="date" id="dateFin" name="dateFin" value="<fmt:formatDate value='${opportunite.dateFin}' pattern='yyyy-MM-dd' />" class="form-control" required>
+                                    <input type="date" id="dateFin" name="dateFin" class="form-control" 
+                                           value="<fmt:formatDate value="${opportunite.dateFin}" pattern="yyyy-MM-dd"/>" required>
                                 </div>
+                            </div>
+                            <div class="input-group">
+                                <label for="objectifs_principaux">Objectifs principaux</label>
+                                <textarea id="objectifs_principaux" name="objectifs_principaux" class="form-control" 
+                                         placeholder="Objectifs de l'opportunité...">${opportunite.objectifs_principaux}</textarea>
                             </div>
                             <div id="error-message" class="error-message">
                                 <i class="fas fa-exclamation-triangle"></i> La date de fin doit être après la date de début.
                             </div>
                         </div>
-
-                        <div class="form-section">
-                            <h4 class="section-title">Objectifs</h4>
-                            <div class="input-group">
-                                <label for="objectifs_principaux">Objectifs principaux</label>
-                                <textarea id="objectifs_principaux" name="objectifs_principaux" class="form-control">${opportunite.objectifsPrincipaux}</textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-container">
                         <div class="form-section">
                             <h4 class="section-title">Architecture</h4>
                             <div class="input-group">
-                                <label for="description_architecture">Description architecture</label>
-                                <textarea id="description_architecture" name="description_architecture" class="form-control">${opportunite.descriptionArchitecture}</textarea>
+                                <label for="description_architecture">Description de l'architecture</label>
+                                <textarea id="description_architecture" name="description_architecture" class="form-control" 
+                                         placeholder="Décrivez l'architecture technique...">${opportunite.description_architecture}</textarea>
                             </div>
-                            <div class="input-group">
-                                <label for="file">Fichier joint</label>
-                                <input type="file" id="file" name="file" class="form-control">
-                                <c:if test="${not empty opportunite.nomFichier}">
-                                    <p class="file-info">Fichier actuel : <a href="${pageContext.request.contextPath}/uploads/${opportunite.nomFichier}" target="_blank">${opportunite.nomFichier}</a></p>
-                                </c:if>
+                            <div class="file-upload">
+                                <label for="fileInput" class="file-label">Joindre un fichier</label>
+                                <input type="file" id="fileInput" name="file" class="form-control-file">
+                                <small class="text-muted">Formats acceptés: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX</small>
                             </div>
+                            
                         </div>
-
+                    </div>
+                    <div class="form-container">
                         <div class="form-section">
-                            <h4 class="section-title">Équipe</h4>
+                            <h4 class="section-title">Suivi Interne</h4>
                             <div class="input-group">
-                                <label for="responsable">Responsable</label>
-                                <input type="text" id="responsable" name="responsable" value="${opportunite.responsable}" class="form-control">
+                                <label for="responsable_id">Responsable</label>
+                               <select id="responsable_id" name="responsable_id" class="form-control" required>
+    <option value="">Choisir...</option>
+    <c:forEach var="utilisateur" items="${utilisateurs}">
+        <option value="${utilisateur.id}" ${opportunite.responsable_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
+    </c:forEach>
+</select>
+                               
                             </div>
                             <div class="input-group">
                                 <label for="membre1">Membre 1</label>
-                                <input type="text" id="membre1" name="membre1" value="${opportunite.membre1}" class="form-control">
+                                <select id="membre1" name="membre1" class="form-control">
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}" ${opportunite.membre1_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class="input-group">
                                 <label for="membre2">Membre 2</label>
-                                <input type="text" id="membre2" name="membre2" value="${opportunite.membre2}" class="form-control">
+                                <select id="membre2" name="membre2" class="form-control">
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}" ${opportunite.membre2_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class="input-group">
                                 <label for="membre3">Membre 3</label>
-                                <input type="text" id="membre3" name="membre3" value="${opportunite.membre3}" class="form-control">
+                                <select id="membre3" name="membre3" class="form-control">
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}" ${opportunite.membre3_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                         </div>
                     </div>
-
                     <div class="btn-container">
-                        <button type="reset" class="btn-secondary">Annuler</button>
+                        <button type="button" class="btn-secondary" onclick="history.back()">Annuler</button>
                         <button type="submit" class="btn-primary">
-                            <i class="fas fa-save"></i> Sauvegarder
+                            <i class="fas fa-save"></i> Mettre à jour
                         </button>
                     </div>
                 </form>
             </div>
         </main>
     </div>
-
     <!-- Notification toast -->
     <div class="toast-container">
         <div class="toast" id="toast-success">
@@ -303,14 +327,13 @@
             </div>
             <div class="toast-content">
                 <div class="toast-title">Succès!</div>
-                <div class="toast-message">L'opportunité a été modifiée avec succès.</div>
+                <div class="toast-message">L'opportunité a été mise à jour avec succès.</div>
             </div>
             <button class="toast-close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Afficher le message de succès s'il existe
@@ -320,17 +343,14 @@
                     document.getElementById('toast-success').classList.remove('show');
                 }, 5000);
             </c:if>
-            
             // Sidebar toggle
             const sidebarToggle = document.createElement('button');
             sidebarToggle.classList.add('sidebar-toggle');
             sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
             document.querySelector('.main-header').prepend(sidebarToggle);
-            
             sidebarToggle.addEventListener('click', function() {
                 document.body.classList.toggle('sidebar-open');
             });
-
             // Sidebar collapse
             const sidebarCollapse = document.getElementById('sidebar-collapse');
             sidebarCollapse.addEventListener('click', function() {
@@ -339,20 +359,16 @@
                     window.dispatchEvent(new Event('resize'));
                 }, 300);
             });
-
             // User dropdown
             const avatarTrigger = document.getElementById('avatar-trigger');
             const userDropdown = document.getElementById('user-dropdown');
-            
             avatarTrigger.addEventListener('click', function(e) {
                 e.stopPropagation();
                 userDropdown.classList.toggle('show');
             });
-            
             document.addEventListener('click', function() {
                 userDropdown.classList.remove('show');
             });
-            
             // Toggle submenu
             const submenus = document.querySelectorAll('.has-submenu');
             submenus.forEach(menu => {
@@ -366,7 +382,6 @@
                             otherMenu.classList.remove('expanded');
                         }
                     });
-                    
                     const subId = this.id.replace('-menu', '-submenu');
                     const subMenu = document.getElementById(subId);
                     subMenu.classList.toggle('show');
@@ -374,7 +389,11 @@
                     e.preventDefault();
                 });
             });
-
+            // Masquer le message d'erreur par défaut
+            const errorMessage = document.getElementById('error-message');
+            if (errorMessage) {
+                errorMessage.style.display = 'none';
+            }
             // Animations sur survol
             const navItems = document.querySelectorAll('.nav-item');
             navItems.forEach(item => {
@@ -383,12 +402,10 @@
                         this.querySelector('i:first-child').classList.add('fa-beat');
                     }
                 });
-                
                 item.addEventListener('mouseleave', function() {
                     this.querySelector('i:first-child').classList.remove('fa-beat');
                 });
             });
-
             // Toggle du thème clair/sombre
             const themeToggle = document.getElementById('theme-toggle');
             themeToggle.addEventListener('click', function() {
@@ -402,30 +419,58 @@
                     localStorage.setItem('theme', 'light');
                 }
             });
-            
             // Appliquer le thème sauvegardé
             if (localStorage.getItem('theme') === 'dark') {
                 document.body.classList.add('dark-theme');
                 themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
             }
-            
             // Toast notification
             const toast = document.getElementById('toast-success');
             const toastClose = document.querySelector('.toast-close');
-            
-            toastClose.addEventListener('click', function() {
-                toast.classList.remove('show');
-            });
+            if (toastClose) {
+                toastClose.addEventListener('click', function() {
+                    toast.classList.remove('show');
+                });
+            }
+            // Gestion des fichiers
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                fileInput.addEventListener('change', function(event) {
+                    let fileList = document.getElementById('fileList');
+                    fileList.innerHTML = ''; // Vider la liste avant d'ajouter les nouveaux fichiers
+                    Array.from(event.target.files).forEach((file, index) => {
+                        let fileItem = document.createElement('div');
+                        fileItem.classList.add('file-item');
+                        fileItem.innerHTML = `
+                            <span class="file-icon">📄</span>
+                            <span class="file-name">${file.name}</span>
+                            <button type="button" class="remove-file" onclick="removeFile(${index})">❌</button>
+                        `;
+                        fileList.appendChild(fileItem);
+                    });
+                });
+            }
         });
-
+        function removeFile(index) {
+            let fileInput = document.getElementById('fileInput');
+            if (fileInput && fileInput.files.length > 0) {
+                let dataTransfer = new DataTransfer();
+                Array.from(fileInput.files).forEach((file, i) => {
+                    if (i !== index) {
+                        dataTransfer.items.add(file);
+                    }
+                });
+                fileInput.files = dataTransfer.files;
+                // Rafraîchir la liste affichée
+                document.getElementById('fileInput').dispatchEvent(new Event('change'));
+            }
+        }
         function validateForm(event) {
-            event.preventDefault();
-            const startDate = document.getElementById("dateDebut").value;
-            const endDate = document.getElementById("dateFin").value;
+            const startDate = document.getElementById("date_debut").value;
+            const endDate = document.getElementById("date_fin").value;
             const errorMessage = document.getElementById("error-message");
             const inputs = document.querySelectorAll("input[required], select[required], textarea[required]");
             let allFilled = true;
-
             inputs.forEach((input) => {
                 if (input.value.trim() === "") {
                     allFilled = false;
@@ -437,23 +482,20 @@
                     input.classList.remove('error');
                 }
             });
-
             if (!allFilled) {
+                event.preventDefault();
                 return false;
             }
-
             if (endDate && startDate && startDate > endDate) {
                 errorMessage.style.display = "block";
                 // Ajouter animation
                 errorMessage.classList.add('shake');
                 setTimeout(() => errorMessage.classList.remove('shake'), 500);
+                event.preventDefault();
                 return false;
             } else {
                 errorMessage.style.display = "none";
             }
-
-            // Soumettre le formulaire
-            document.querySelector('form').submit();
             return true;
         }
     </script>

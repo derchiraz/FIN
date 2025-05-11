@@ -576,7 +576,7 @@ body.sidebar-open .sidebar {
 
 .container {
     width: 100%;
-    max-width: 950px;
+    max-width: 1900px;
     margin: 0 auto;
     background: white;
     border-radius: var(--border-radius-lg);

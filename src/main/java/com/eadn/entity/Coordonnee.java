@@ -18,22 +18,11 @@ public class Coordonnee implements Serializable {
     private String phone;
     private String disponibilite;
 
-    @OneToOne
-    @JoinColumn(name = "utilisateur_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "utilisateur_id")
     private Utilisateur utilisateur;
 
-    // Constructeur par défaut
     public Coordonnee() {}
-
-    // Constructeur avec paramètres
-    public Coordonnee(String nom, String titre, String service, String email, String phone, String disponibilite) {
-        this.nom = nom;
-        this.titre = titre;
-        this.service = service;
-        this.email = email;
-        this.phone = phone;
-        this.disponibilite = disponibilite;
-    }
 
     // Getters et Setters
     public Long getId() {
@@ -98,5 +87,9 @@ public class Coordonnee implements Serializable {
 
     public void setUtilisateur(Utilisateur utilisateur) {
         this.utilisateur = utilisateur;
+    }
+
+    public Long getRessourceId() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

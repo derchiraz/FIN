@@ -2,7 +2,7 @@
 <!DOCTYPE resources PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Resource Definitions//EN"
 "http://glassfish.org/dtds/glassfish-resources_1_5.dtd">
 <resources>
-    <jdbc-connection-pool name="myDataSourcePool"
+    <jdbc-connection-pool name="MyPool"
                           datasource-classname="org.postgresql.ds.PGSimpleDataSource"
                           res-type="javax.sql.DataSource"
                           max-pool-size="32"
@@ -11,10 +11,10 @@
                           idle-timeout-in-seconds="300">
         <property name="serverName" value="localhost"/>
         <property name="portNumber" value="5432"/>
-        <property name="databaseName" value="binome_test"/>
+        <property name="databaseName" value="mydb"/>
         <property name="user" value="postgres"/>
         <property name="password" value="postgres"/>
     </jdbc-connection-pool>
 
-    <jdbc-resource pool-name="myDataSourcePool" jndi-name="jdbc/maDataSource"/>
+    <jdbc-resource pool-name="MyPool" jndi-name="jdbc/MyPool"/>
 </resources>

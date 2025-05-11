@@ -1,5 +1,5 @@
 <%-- 
-    Document   : detail
+    Document   : detailsOpportunite
     Created on : 13 avr. 2025, 22:21:36
     Author     : L13
 --%>
@@ -94,12 +94,12 @@
                         </a>
                         <ul class="submenu show" id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeOpportunite.jsp" class="active">
+                                <a href="${pageContext.request.contextPath}/opportunite/liste" class="active">
                                     <i class="fas fa-list"></i> Liste des opportunités
                                 </a>
                             </li>
@@ -118,7 +118,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/listeRessources.jsp">
+                                <a href="${pageContext.request.contextPath}/ressource/liste">
                                     <i class="fas fa-users-cog"></i> liste des employés
                                 </a>
                             </li>
@@ -148,18 +148,19 @@
                 <div class="app-header">
                     <div class="breadcrumbs">
                         <a href="${pageContext.request.contextPath}/views/home.jsp">Accueil</a> / 
-                        <a href="${pageContext.request.contextPath}/views/listeOpportunite.jsp">Liste des Opportunités</a> / 
+                        <a href="${pageContext.request.contextPath}/opportunite/liste">Opportunités</a> / 
                         <span>Détails</span>
                     </div>
                     <div class="header-top">
                         <h1>Détails de l'Opportunité</h1>
                         <div class="header-actions">
-                            <button class="btn-action" onclick="window.location.href='${pageContext.request.contextPath}/views/editOpportunite.jsp${opportunite.id}'">
+                            <button class="btn-action" onclick="window.location.href='${pageContext.request.contextPath}/opportunite/edit?id=${opportunite.id}'">
                                 <i class="fas fa-edit"></i> Modifier
                             </button>
                             <button class="btn-action btn-danger" onclick="confirmerSuppression(${opportunite.id})">
                                 <i class="fas fa-trash"></i> Supprimer
                             </button>
+                            
                         </div>
                     </div>
                     <div class="header-divider"></div>
@@ -168,41 +169,62 @@
                 <!-- Détails de l'opportunité -->
                 <div class="form-container">
                     <div class="form-section">
-                        <h4 class="section-title">Informations Client</h4>
-                        <p><strong>Entreprise :</strong> ${opportunite.nomEntreprise}</p>
-                        <p><strong>Contact :</strong> ${opportunite.nomContact}</p>
-                        <p><strong>Téléphone :</strong> ${opportunite.telephone}</p>
-                        <p><strong>Email :</strong> ${opportunite.email}</p>
-                        <p><strong>Adresse :</strong> ${opportunite.adresse}</p>
+                        <h4 class="section-title">Informations de base</h4>
+                        <p><strong>Nom de l'opportunité :</strong> ${opportunite.nom_opportunite}</p>
+                        <p><strong>Statut</strong> ${opportunite.status}</p>
                     </div>
-
+                 
                     <div class="form-section">
-                        <h4 class="section-title">Détails</h4>
-                        <p><strong>Nom :</strong> ${opportunite.nomOpportunite}</p>
-                        <p><strong>Description :</strong> ${opportunite.descriptionOpportunite}</p>
-                        <p><strong>Budget estimé :</strong> <fmt:formatNumber value="${opportunite.budgetEstime}" type="currency" currencySymbol="DA" /></p>
-                        <p><strong>Status :</strong> ${opportunite.status}</p>
-                        <p><strong>Date début :</strong> <fmt:formatDate value="${opportunite.dateDebut}" pattern="dd/MM/yyyy" /></p>
-                        <p><strong>Date fin :</strong> <fmt:formatDate value="${opportunite.dateFin}" pattern="dd/MM/yyyy" /></p>
+                        <h4 class="section-title">Informations Client</h4>
+                        <p><strong>Entreprise :</strong> ${opportunite.nom_entreprise}</p>
+                        <p><strong>Contact :</strong>${opportunite.nom_contact}</p>
                     </div>
                 </div>
+              
 
                 <div class="form-container">
                     <div class="form-section">
-                        <h4 class="section-title">Planification & Architecture</h4>
-                        <p><strong>Objectifs :</strong> ${opportunite.objectifsPrincipaux}</p>
-                        <p><strong>Architecture :</strong> ${opportunite.descriptionArchitecture}</p>
-                        <c:if test="${not empty opportunite.nomFichier}">
-                            <p><strong>Fichier joint :</strong> <a href="${pageContext.request.contextPath}/uploads/${opportunite.nomFichier}" target="_blank">${opportunite.nomFichier}</a></p>
-                        </c:if>
+                        <h4 class="section-title">Période et Budget</h4>
+                        <p><strong>Date de début :</strong> <fmt:formatDate value="${opportunite.dateDebut}" pattern="dd/MM/yyyy" /></p>
+                        <p><strong>Date de fin :</strong> <fmt:formatDate value="${opportunite.dateFin}" pattern="dd/MM/yyyy" /></p>
+                        <p><strong>Budget estimé :</strong><fmt:formatNumber value="${opportunite.budget_estime}" type="currency" currencySymbol="DA" /></p>     
                     </div>
-
+                </div>
+                    <div class="form-container">
                     <div class="form-section">
                         <h4 class="section-title">Équipe</h4>
-                        <p><strong>Responsable :</strong> ${opportunite.responsable}</p>
-                        <p><strong>Membre 1 :</strong> ${opportunite.membre1}</p>
-                        <p><strong>Membre 2 :</strong> ${opportunite.membre2}</p>
-                        <p><strong>Membre 3 :</strong> ${opportunite.membre3}</p>
+                        <p><strong>Responsable :</strong> 
+                            <c:forEach var="utilisateur" items="${utilisateurs}">
+                                <c:if test="${utilisateur.id == opportunite.responsable}">
+                                    ${utilisateur.nom} ${utilisateur.prenom}
+                                </c:if>
+                            </c:forEach>
+                            ${opportunite.responsable == null ? 'Non assigné' : ''}
+                        </p>
+                        <p><strong>Membre 1 :</strong> 
+                            <c:forEach var="utilisateur" items="${utilisateurs}">
+                                <c:if test="${utilisateur.id == opportunite.membre1}">
+                                    ${utilisateur.nom} ${utilisateur.prenom}
+                                </c:if>
+                            </c:forEach>
+                            ${opportunite.membre1 == null ? 'Non assigné' : ''}
+                        </p>
+                        <p><strong>Membre 2 :</strong> 
+                            <c:forEach var="utilisateur" items="${utilisateurs}">
+                                <c:if test="${utilisateur.id == opportunite.membre2}">
+                                    ${utilisateur.nom} ${utilisateur.prenom}
+                                </c:if>
+                            </c:forEach>
+                            ${opportunite.membre2 == null ? 'Non assigné' : ''}
+                        </p>
+                        <p><strong>Membre 3 :</strong> 
+                            <c:forEach var="utilisateur" items="${utilisateurs}">
+                                <c:if test="${utilisateur.id == opportunite.membre3}">
+                                    ${utilisateur.nom} ${utilisateur.prenom}
+                                </c:if>
+                            </c:forEach>
+                            ${opportunite.membre3 == null ? 'Non assigné' : ''}
+                        </p>
                     </div>
                 </div>
 
@@ -224,11 +246,9 @@
                 <p>Confirmez-vous la suppression de cette opportunité ?</p>
             </div>
             <div class="modal-footer">
-                <form method="post" action="${pageContext.request.contextPath}/views/listeOpportunite.jsp">
-                    <input type="hidden" name="id" value="${opportunite.id}">
-                    <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
-                    <button type="submit" class="btn-danger">Supprimer</button>
-                </form>
+                <input type="hidden" id="deleteOpportuniteId" value="">
+                <button type="button" class="btn-secondary" onclick="fermerModal()">Annuler</button>
+                <button type="button" class="btn-danger" onclick="supprimerOpportunite()">Supprimer</button>
             </div>
         </div>
     </div>
@@ -242,93 +262,66 @@
             document.querySelector('.main-header').prepend(sidebarToggle);
             
             sidebarToggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-open');
+                document.querySelector('.sidebar').classList.toggle('collapsed');
+                document.querySelector('.main-content').classList.toggle('expanded');
             });
-
-            // Sidebar collapse
-            const sidebarCollapse = document.getElementById('sidebar-collapse');
-            sidebarCollapse.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-collapsed');
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
-
-            // User dropdown
+            
+            // User dropdown toggle
             const avatarTrigger = document.getElementById('avatar-trigger');
-            const userDropdown = document.getElementById('user-dropdown');
-            
-            avatarTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-            
-            document.addEventListener('click', function() {
-                userDropdown.classList.remove('show');
-            });
-            
-            // Toggle submenu
-            const submenus = document.querySelectorAll('.has-submenu');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    // Fermer tous les autres sous-menus
-                    submenus.forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            const subId = otherMenu.id.replace('-menu', '-submenu');
-                            const subMenu = document.getElementById(subId);
-                            subMenu.classList.remove('show');
-                            otherMenu.classList.remove('expanded');
-                        }
-                    });
-                    
-                    const subId = this.id.replace('-menu', '-submenu');
-                    const subMenu = document.getElementById(subId);
-                    subMenu.classList.toggle('show');
-                    this.classList.toggle('expanded');
-                    e.preventDefault();
+            if (avatarTrigger) {
+                avatarTrigger.addEventListener('click', function() {
+                    document.getElementById('user-dropdown').classList.toggle('show');
                 });
-            });
-
-            // Animations sur survol
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('has-submenu')) {
-                        this.querySelector('i:first-child').classList.add('fa-beat');
+            }
+            
+            // Close dropdown when clicking outside
+            window.addEventListener('click', function(e) {
+                if (!e.target.matches('#avatar-trigger') && !e.target.closest('#avatar-trigger')) {
+                    const dropdown = document.getElementById('user-dropdown');
+                    if (dropdown && dropdown.classList.contains('show')) {
+                        dropdown.classList.remove('show');
                     }
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.querySelector('i:first-child').classList.remove('fa-beat');
-                });
-            });
-
-            // Toggle du thème clair/sombre
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                if (document.body.classList.contains('dark-theme')) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'light');
                 }
             });
-            
-            // Appliquer le thème sauvegardé
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
         });
-
+        
+        // Fonction pour confirmer la suppression
         function confirmerSuppression(id) {
+            document.getElementById('deleteOpportuniteId').value = id;
             document.getElementById('deleteModal').classList.add('show');
         }
         
+        // Fermer le modal
         function fermerModal() {
             document.getElementById('deleteModal').classList.remove('show');
+        }
+        
+        // Fonction pour supprimer l'opportunité après confirmation
+        function supprimerOpportunite() {
+            const id = document.getElementById('deleteOpportuniteId').value;
+            
+            fetch('${pageContext.request.contextPath}/opportunite/liste', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'action=delete&id=' + id
+            })
+            .then(response => response.json())
+            .then(data => {
+                fermerModal();
+                if (data.success) {
+                    alert(data.message);
+                    window.location.href = '${pageContext.request.contextPath}/opportunite/liste';
+                } else {
+                    alert('Erreur: ' + data.message);
+                }
+            })
+            .catch(error => {
+                fermerModal();
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de la suppression.');
+            });
         }
     </script>
 </body>

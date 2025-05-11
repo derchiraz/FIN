@@ -8,9 +8,11 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @WebServlet("/projet/update")
 public class UpdateProjetServlet extends HttpServlet {
@@ -27,29 +29,64 @@ public class UpdateProjetServlet extends HttpServlet {
             Projet projet = projetService.findById(id);
 
             if (projet != null) {
+                
                 projet.setNom(req.getParameter("nom"));
                 projet.setNomCourt(req.getParameter("nomCourt"));
                 projet.setDescription(req.getParameter("description"));
-                projet.setBudget(Double.parseDouble(req.getParameter("budget")));
-                projet.setStatus(req.getParameter("status"));
-                projet.setDateDebut(Date.valueOf(req.getParameter("dateDebut")));
-                projet.setDateFin(Date.valueOf(req.getParameter("dateFin")));
-
-                // Récupération du responsable et du compte comme texte
+                
                 projet.setResponsable(req.getParameter("responsable"));
-                projet.setCompte(req.getParameter("compte"));
+                
+                // Mise à jour du statut (vérifiez le nom exact du champ)
+                projet.setStatus(req.getParameter("status"));
+                
+               
+               
+                
+                // Budget
+                String budgetStr = req.getParameter("budget");
+                if (budgetStr != null && !budgetStr.isEmpty()) {
+                    projet.setBudget(Double.parseDouble(budgetStr));
+                }
+                
+                // Dates - utiliser SimpleDateFormat pour la conversion
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                
+                String dateDebutStr = req.getParameter("dateDebut");
+                if (dateDebutStr != null && !dateDebutStr.isEmpty()) {
+                    projet.setDateDebut(sdf.parse(dateDebutStr));
+                }
+                
+                String dateFinStr = req.getParameter("dateFin");
+                if (dateFinStr != null && !dateFinStr.isEmpty()) {
+                    projet.setDateFin(sdf.parse(dateFinStr));
+                    
+                    // Recalculer la durée en jours si nécessaire
+                    if (projet.getDateDebut() != null && projet.getDateFin() != null) {
+                        long diff = projet.getDateFin().getTime() - projet.getDateDebut().getTime();
+                        projet.setDureeEnJours((int) (diff / (1000 * 60 * 60 * 24)));
+                    }
+                }
 
                 // Mise à jour
                 projetService.update(projet);
+                
+                // Message de succès
+                HttpSession session = req.getSession();
+                session.setAttribute("successMessage", "Projet mis à jour avec succès !");
+            } else {
+                // Message d'erreur si le projet n'existe pas
+                HttpSession session = req.getSession();
+                session.setAttribute("errorMessage", "Projet introuvable, impossible de mettre à jour.");
             }
 
             // Redirection après mise à jour
-            resp.sendRedirect(req.getContextPath() + "/views/listeProjet.jsp");
+            resp.sendRedirect(req.getContextPath() + "/projet/liste");
 
         } catch (Exception e) {
             e.printStackTrace();
-            req.setAttribute("error", "Erreur lors de la mise à jour du projet.");
-            req.getRequestDispatcher("/views/projet.jsp").forward(req, resp);
+            HttpSession session = req.getSession();
+            session.setAttribute("errorMessage", "Erreur lors de la mise à jour du projet: " + e.getMessage());
+            resp.sendRedirect(req.getContextPath() + "/projet/liste");
         }
     }
 }

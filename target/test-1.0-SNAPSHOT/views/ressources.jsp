@@ -91,7 +91,7 @@
                         </a>
                         <ul class="submenu " id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>

@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 @WebServlet("/ressource/update")
-public class UpdateRessourceServlet extends HttpServlet {
+public class UpdateRessourceServlet  extends HttpServlet {
 
     @Inject
     private RessourceService service;

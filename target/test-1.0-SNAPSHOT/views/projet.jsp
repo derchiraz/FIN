@@ -76,7 +76,7 @@
                         </a>
                         <ul class="submenu show" id="project-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/projet.jsp"class="active">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=projet" class="active">
                                     <i class="fas fa-plus-circle"></i> Ajouter projet
                                 </a>
                             </li>
@@ -96,7 +96,7 @@
                         </a>
                         <ul class="submenu " id="opportunite-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/opportunite.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=opportunite">
                                     <i class="fas fa-plus-circle"></i> Ajouter opportunité
                                 </a>
                             </li>
@@ -190,7 +190,7 @@
                         <div class="form-section">
                             <h4 class="section-title">Détails du Projet</h4>
                             <div class="input-group">
-                                <label for="budget">Budget</label>
+                                <label for="budget">Budget (DA)</label>
                                 <input type="number" id="budget" name="budget" class="form-control" 
                                       placeholder="Montant..." required>
                             </div>
@@ -198,31 +198,24 @@
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control" required>
                                     <option value="">Sélectionnez un status</option>
-                                    <option value="progress" selected>In progress</option>
-                                    <option value="completed">Completed</option>
-                                    <option value="pending">Pending</option>
+                                    <option value="enCours" >En cours</option>
+                                    <option value="terminée">Terminée</option>
+                                    <option value="enAttente">En attente</option>
+                                    <option value="clôturée" >Clôturée</option>
+
                                 </select>
                             </div>
+                            
                             <div class="input-group">
-                                <label for="responsable">Responsable</label>
-                                <select id="responsable" name="responsable" class="form-control" required>
-                                    <option value="">Choisir...</option>
-                                     <option value="nom">Chiraz</option>
-                                   <c:forEach var="user" items="${responsables}">
-                                        <option value="${user.id}">${user.nom} ${user.prenom}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label for="compte">Compte</label>
-                                <select id="compte" name="compte" class="form-control" required>
-                                    <option value="">Choisir...</option>
-                                     <option value="email">test@gmail.com</option>
-                                    <c:forEach var="compte" items="${comptes}">
-                                        <option value="${compte.id}">${compte.nom}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+                                    <label for="responsable">Responsable</label>
+                                       <select id="responsable" name="responsable" class="form-control" required>
+                                          <option value="">Choisir...</option>
+                                              <c:forEach var="utilisateur" items="${utilisateurs}">
+                                                 <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                              </c:forEach>
+                                        </select>
+                                </div>
+                            
                         </div>
                     </div>
 
