@@ -70,4 +70,25 @@ public class ProjetService {
             .setParameter("term", searchTerm)
             .getResultList();
     }
+
+    
+public void updateProgression(Long projetId, Integer progression) {
+        Projet p = findById(projetId);
+        if (p != null) {
+            p.setProgression(progression);
+            em.merge(p);
+        } else {
+            System.err.println("Projet introuvable pour mise à jour progression, ID: " + projetId);
+        }
+    }
+
+    public void validerProjet(Long idProjet) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+    public Projet findByIdWithMembres(Long id) {
+    return em.createQuery("SELECT p FROM Projet p LEFT JOIN FETCH p.membres WHERE p.id = :id", Projet.class)
+             .setParameter("id", id)
+             .getSingleResult();
+}
+
 }

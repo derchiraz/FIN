@@ -15,6 +15,28 @@
     <title>Modifier un Projet</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/projet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+     <style>
+    .membre-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-remove {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-remove:hover {
+    background-color: #c0392b;
+}
+</style>
+
 </head>
 <body>
     <!-- Header principal -->
@@ -193,23 +215,22 @@
                                       value="${projet.budget}" required>
                             </div>
                             <div class="input-group">
+    <label for="progression">Progression (%)</label>
+    <input type="number" id="progression" name="progression" class="form-control"
+           value="${projet.progression}" min="0" max="100" required>
+</div>
+
+                            <div class="input-group">
                                 <label for="status">Status</label>
                                 <select id="status" name="status" class="form-control" required>
                                     <option value="enCours" ${projet.status == 'enCours' ? 'selected' : ''}>En cours</option>
-                                    <option value="terminée" ${projet.status == 'terminée' ? 'selected' : ''}>Terminée</option>
+                                    <option value="terminee" ${projet.status == 'terminee' ? 'selected' : ''}>Terminée</option>
                                     <option value="enAttente" ${projet.status == 'enAttente' ? 'selected' : ''}>En attente</option>
-                                    <option value="clôturée" ${projet.status == 'clôturée' ? 'selected' : ''}>Clôturée</option>
+                                    <option value="cloturee" ${projet.status == 'cloturee' ? 'selected' : ''}>Clôturée</option>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label for="responsable_id">Responsable</label>
-                                <select id="responsable_id" name="responsable_id" class="form-control" required>
-                                   <option value="">Choisir...</option>
-                                   <c:forEach var="utilisateur" items="${utilisateurs}">
-                                <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                               </c:forEach>
-                                </select>
-                            </div>
+                            
+                                
                         </div>
                     </div>
 
@@ -230,7 +251,40 @@
                                 <i class="fas fa-exclamation-triangle"></i> La date de fin doit être après la date de début.
                             </div>
                         </div>
+                            <div class="form-section">
+                            <h4 class="section-title">Équipe du Projet</h4>
+
+                            <!-- Responsable -->
+                            <div class="input-group">
+                                <label for="responsable">Responsable du projet</label>
+                                <select id="responsable" name="responsable" class="form-control" required>
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <!-- Membres dynamiques -->
+                            <div id="membres-wrapper">
+                                <label>Membres du projet</label>
+                                <div id="membre-template" style="display: none;">
+                                <div class="membre-row input-group">
+                                    <select name="membres" class="form-control">
+                                        <option value="">Choisir...</option>
+                                        <c:forEach var="utilisateur" items="${utilisateurs}">
+                                            <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <button type="button" class="btn-remove" onclick="removeMembre(this)">−</button>
+                                </div>
+                            </div>
+                            </div>
+
+                            <button type="button" class="btn-secondary" onclick="addMembre()">+ Ajouter un membre</button>
+                        </div>
                     </div>
+                    
 
                     <div class="form-actions">
                         <button type="button" class="btn-secondary" onclick="location.href='${pageContext.request.contextPath}/projet/liste'">
@@ -240,6 +294,8 @@
                             <i class="fas fa-save"></i> Enregistrer les modifications
                         </button>
                     </div>
+            </div>
+                            
                 </form>
             </div>
         </main>
@@ -291,22 +347,48 @@
             });
         });
         
-        // Validation du formulaire
         function validateForm(event) {
-            const dateDebut = new Date(document.getElementById('date_debut').value);
-            const dateFin = new Date(document.getElementById('date_fin').value);
-            const dateError = document.getElementById('dateError');
-            
-            // Vérifier que la date de fin est après la date de début
-            if (dateFin < dateDebut) {
-                dateError.style.display = 'block';
-                event.preventDefault();
-                return false;
-            }
-            
-            dateError.style.display = 'none';
-            return true;
+    const dateDebut = new Date(document.getElementById('dateDebut').value);
+    const dateFin = new Date(document.getElementById('dateFin').value);
+    const dateError = document.getElementById('dateError');
+    const progression = parseInt(document.getElementById('progression').value);
+
+    let valid = true;
+
+    // Vérification des dates
+    if (dateFin < dateDebut) {
+        dateError.style.display = 'block';
+        valid = false;
+    } else {
+        dateError.style.display = 'none';
+    }
+
+    // Vérification de la progression
+    if (isNaN(progression) || progression < 0 || progression > 100) {
+        alert("La progression doit être un nombre entre 0 et 100.");
+        valid = false;
+    }
+
+    if (!valid) {
+        event.preventDefault();
+    }
+
+    return valid;
+}
+function addMembre() {
+    const wrapper = document.getElementById("membres-wrapper");
+    const template = document.querySelector("#membre-template .membre-row");
+
+    // Cloner le contenu du modèle
+    const newMembre = template.cloneNode(true);
+    wrapper.appendChild(newMembre);
+}
+
+        function removeMembre(button) {
+            const row = button.closest('.membre-row');
+            row.remove();
         }
+
     </script>
 </body>
 </html>

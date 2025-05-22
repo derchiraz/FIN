@@ -66,6 +66,14 @@ public class UpdateProjetServlet extends HttpServlet {
                         projet.setDureeEnJours((int) (diff / (1000 * 60 * 60 * 24)));
                     }
                 }
+                // 🎯 Progression (0 à 100)
+                String progressionStr = req.getParameter("progression");
+                if (progressionStr != null && !progressionStr.isEmpty()) {
+                    int progression = Integer.parseInt(progressionStr);
+                    if (progression < 0) progression = 0;
+                    if (progression > 100) progression = 100;
+                    projet.setProgression(progression);
+                }
 
                 // Mise à jour
                 projetService.update(projet);

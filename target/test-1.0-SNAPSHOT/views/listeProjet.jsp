@@ -18,6 +18,68 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/listeProjet.css">
     <!-- Icons pour la sidebar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+    .progress-container {
+        width: 100%;
+        background-color: #f1f1f1;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 22px;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        position: relative;
+    }
+
+    .progress-bar {
+        height: 100%;
+        line-height: 22px;
+        text-align: center;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        width: 0%;
+        border-radius: 12px;
+        animation: growBar 1s ease-out forwards;
+    }
+
+    .progress-bar.low {
+        background: linear-gradient(90deg, #ffc107, #ffca2c);
+    }
+
+    .progress-bar.medium {
+        background: linear-gradient(90deg, #17a2b8, #20c997);
+    }
+
+    .progress-bar.high {
+        background: linear-gradient(90deg, #28a745, #218838);
+    }
+
+    @keyframes growBar {
+        from {
+            width: 0%;
+        }
+        to {
+            width: var(--progress-value);
+        }
+    }
+
+    .progress-label {
+        position: absolute;
+        width: 100%;
+        text-align: center;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.75rem;
+        z-index: 2;
+        top: 0;
+        left: 0;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+</style>
+
 </head>
 <body>
     <!-- Header principal -->
@@ -193,9 +255,9 @@
                                 <option value="tous">Tous</option>
                                 
                                 <option value="enCours" >En cours</option>
-                                <option value="terminée">Terminée</option>
+                                <option value="terminee">Terminée</option>
                                 <option value="enAttente">En attente</option>
-                                <option value="clôturée" >Clôturée</option>
+                                <option value="cloturee" >Clôturée</option>
                                
                                     
                                
@@ -222,6 +284,8 @@
                                 <th class="sortable" data-sort="nomCourt">Nom court <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="responsable">Responsable <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="status">Status <i class="fas fa-sort"></i></th>
+                                <th class="sortable" data-sort="progression">Progression <i class="fas fa-sort"></i></th>
+
                                 <th class="sortable" data-sort="dateDebut">Date début <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="dateFin">Date fin <i class="fas fa-sort"></i></th>
                                 <th class="sortable" data-sort="budget">Budget <i class="fas fa-sort"></i></th>
@@ -252,16 +316,34 @@
             </td>
             <td>${projet.nomCourt}</td>
             <td class="projet-responsable">
-                 <option value="${utilisateur.id}" selected>${utilisateur.nom} ${utilisateur.prenom}</option>
+    
+               <c:forEach var="utilisateur" items="${utilisateurs}">
+                                <c:if test="${utilisateur.id == projet.responsable}">
+                                    ${utilisateur.nom} ${utilisateur.prenom}
+                                </c:if>
+                </c:forEach>
             </td>
             <td>
                 <span class="status-badge ${projet.status}">
                     ${projet.status}
                 </span>
             </td>
+            <td>
+    <div class="progress-container">
+        <div class="progress-label">${projet.progression}%</div>
+        <div class="progress-bar
+            ${projet.progression < 50 ? 'low' : (projet.progression < 100 ? 'medium' : 'high')}"
+            style="--progress-value: ${projet.progression}%; animation-delay: 0.1s;">
+        </div>
+    </div>
+</td>
+
+
+
             <td><fmt:formatDate value="${projet.dateDebut}" pattern="dd/MM/yyyy" /></td>
             <td><fmt:formatDate value="${projet.dateFin}" pattern="dd/MM/yyyy" /></td>
             <td class="budget" type="currency" currencySymbol="DA">${projet.budget} </td>
+            
             <td class="actions">
                 <button class="action-btn view-btn" title="Voir" onclick="location.href='${pageContext.request.contextPath}/projet/details/${projet.id}'">
                     <i class="fas fa-eye"></i>

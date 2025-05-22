@@ -15,6 +15,27 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/projet.css">
     <!-- Icons pour la sidebar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+    .membre-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-remove {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-remove:hover {
+        background-color: #c0392b;
+    }
+    </style>
 </head>
 <body>
     <!-- Header principal -->
@@ -199,23 +220,17 @@
                                 <select id="status" name="status" class="form-control" required>
                                     <option value="">Sélectionnez un status</option>
                                     <option value="enCours" >En cours</option>
-                                    <option value="terminée">Terminée</option>
+                                    <option value="terminee">Terminée</option>
                                     <option value="enAttente">En attente</option>
-                                    <option value="clôturée" >Clôturée</option>
+                                    <option value="cloturee" >Clôturée</option>
 
                                 </select>
                             </div>
-                            
                             <div class="input-group">
-                                    <label for="responsable">Responsable</label>
-                                       <select id="responsable" name="responsable" class="form-control" required>
-                                          <option value="">Choisir...</option>
-                                              <c:forEach var="utilisateur" items="${utilisateurs}">
-                                                 <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                                              </c:forEach>
-                                        </select>
-                                </div>
-                            
+                                <label for="progression">Progression (%)</label>
+                                <input type="number" id="progression" name="progression" class="form-control"
+                                      value="${projet.progression}" min="0" max="100" required>
+                            </div>
                         </div>
                     </div>
 
@@ -239,6 +254,39 @@
                             <div id="error-message" class="error-message">
                                 <i class="fas fa-exclamation-triangle"></i> La date de fin doit être après la date de début.
                             </div>
+                        </div>
+                        
+                        <div class="form-section">
+                            <h4 class="section-title">Équipe du Projet</h4>
+
+                            <!-- Responsable -->
+                            <div class="input-group">
+                                <label for="responsable">Responsable du projet</label>
+                                <select id="responsable" name="responsable" class="form-control" required>
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <!-- Membres dynamiques -->
+                            <div id="membres-wrapper">
+                                <label>Membres du projet</label>
+                                <div id="membre-template" style="display: none;">
+                                <div class="membre-row input-group">
+                                    <select name="membres" class="form-control">
+                                        <option value="">Choisir...</option>
+                                        <c:forEach var="utilisateur" items="${utilisateurs}">
+                                            <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <button type="button" class="btn-remove" onclick="removeMembre(this)">−</button>
+                                </div>
+                            </div>
+                            </div>
+
+                            <button type="button" class="btn-secondary" onclick="addMembre()">+ Ajouter un membre</button>
                         </div>
                     </div>
 
@@ -269,155 +317,7 @@
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Afficher le message de succès s'il existe
-            <c:if test="${not empty successMessage}">
-                document.getElementById('toast-success').classList.add('show');
-                setTimeout(() => {
-                    document.getElementById('toast-success').classList.remove('show');
-                }, 5000);
-            </c:if>
-            
-            // Sidebar toggle
-            const sidebarToggle = document.createElement('button');
-            sidebarToggle.classList.add('sidebar-toggle');
-            sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            document.querySelector('.main-header').prepend(sidebarToggle);
-            
-            sidebarToggle.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-open');
-            });
-
-            // Sidebar collapse
-            const sidebarCollapse = document.getElementById('sidebar-collapse');
-            sidebarCollapse.addEventListener('click', function() {
-                document.body.classList.toggle('sidebar-collapsed');
-                setTimeout(() => {
-                    window.dispatchEvent(new Event('resize'));
-                }, 300);
-            });
-
-            // User dropdown
-            const avatarTrigger = document.getElementById('avatar-trigger');
-            const userDropdown = document.getElementById('user-dropdown');
-            
-            avatarTrigger.addEventListener('click', function(e) {
-                e.stopPropagation();
-                userDropdown.classList.toggle('show');
-            });
-            
-            document.addEventListener('click', function() {
-                userDropdown.classList.remove('show');
-            });
-            
-            // Toggle submenu
-            const submenus = document.querySelectorAll('.has-submenu');
-            submenus.forEach(menu => {
-                menu.addEventListener('click', function(e) {
-                    // Fermer tous les autres sous-menus
-                    submenus.forEach(otherMenu => {
-                        if (otherMenu !== menu) {
-                            const subId = otherMenu.id.replace('-menu', '-submenu');
-                            const subMenu = document.getElementById(subId);
-                            subMenu.classList.remove('show');
-                            otherMenu.classList.remove('expanded');
-                        }
-                    });
-                    
-                    const subId = this.id.replace('-menu', '-submenu');
-                    const subMenu = document.getElementById(subId);
-                    subMenu.classList.toggle('show');
-                    this.classList.toggle('expanded');
-                    e.preventDefault();
-                });
-            });
-
-            // Animations sur survol
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('mouseenter', function() {
-                    if (!this.classList.contains('has-submenu')) {
-                        this.querySelector('i:first-child').classList.add('fa-beat');
-                    }
-                });
-                
-                item.addEventListener('mouseleave', function() {
-                    this.querySelector('i:first-child').classList.remove('fa-beat');
-                });
-            });
-
-            // Toggle du thème clair/sombre
-            const themeToggle = document.getElementById('theme-toggle');
-            themeToggle.addEventListener('click', function() {
-                document.body.classList.toggle('dark-theme');
-                if (document.body.classList.contains('dark-theme')) {
-                    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                    // Stocker la préférence
-                    localStorage.setItem('theme', 'dark');
-                } else {
-                    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                    localStorage.setItem('theme', 'light');
-                }
-            });
-            
-            // Appliquer le thème sauvegardé
-            if (localStorage.getItem('theme') === 'dark') {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-            }
-
-            // Set min date to today for date fields
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('dateDebut').min = today;
-            
-            // Toast notification
-            const toast = document.getElementById('toast-success');
-            const toastClose = document.querySelector('.toast-close');
-            
-            toastClose.addEventListener('click', function() {
-                toast.classList.remove('show');
-            });
-        });
-
-        function validateForm(event) {
-            event.preventDefault();
-            const startDate = document.getElementById("dateDebut").value;
-            const endDate = document.getElementById("dateFin").value;
-            const errorMessage = document.getElementById("error-message");
-            const inputs = document.querySelectorAll("input, select, textarea");
-            let allFilled = true;
-
-            inputs.forEach((input) => {
-                if (input.required && input.value.trim() === "") {
-                    allFilled = false;
-                    input.classList.add('error');
-                    // Ajouter animation de secouement
-                    input.classList.add('shake');
-                    setTimeout(() => input.classList.remove('shake'), 500);
-                } else {
-                    input.classList.remove('error');
-                }
-            });
-
-            if (!allFilled) {
-                return false;
-            }
-
-            if (endDate && startDate && startDate > endDate) {
-                errorMessage.style.display = "block";
-                // Ajouter animation
-                errorMessage.classList.add('shake');
-                setTimeout(() => errorMessage.classList.remove('shake'), 500);
-                return false;
-            } else {
-                errorMessage.style.display = "none";
-            }
-
-            // Soumettre le formulaire
-            document.querySelector('form').submit();
-            return true;
-        }
-    </script>
+    <!-- Inclusion du fichier JavaScript externe -->
+    <script src="${pageContext.request.contextPath}/js/projet.js"></script>
 </body>
 </html>

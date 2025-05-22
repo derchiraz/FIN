@@ -14,6 +14,27 @@
     <title>Modifier une Opportunité</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/projet.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css ">
+    <style>
+    .membre-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-remove {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-remove:hover {
+        background-color: #c0392b;
+    }
+    </style>
 </head>
 <body>
     <!-- Header principal -->
@@ -217,9 +238,9 @@
                                 <select id="status" name="status" class="form-control" required>
                                     <option value="">Sélectionnez un status</option>
                                     <option value="enCours" ${opportunite.status == 'enCours' ? 'selected' : ''}>En cours</option>
-                                    <option value="terminée" ${opportunite.status == 'terminée' ? 'selected' : ''}>Terminée</option>
+                                    <option value="terminee" ${opportunite.status == 'terminee' ? 'selected' : ''}>Terminée</option>
                                     <option value="enAttente" ${opportunite.status == 'enAttente' ? 'selected' : ''}>En attente</option>
-                                    <option value="clôturée" ${opportunite.status == 'clôturée' ? 'selected' : ''}>Clôturée</option>
+                                    <option value="cloturee" ${opportunite.status == 'cloturee' ? 'selected' : ''}>Clôturée</option>
                                 </select>
                             </div>
                             
@@ -270,43 +291,34 @@
                     <div class="form-container">
                         <div class="form-section">
                             <h4 class="section-title">Suivi Interne</h4>
+                            <!-- Responsable -->
                             <div class="input-group">
-                                <label for="responsable_id">Responsable</label>
-                               <select id="responsable_id" name="responsable_id" class="form-control" required>
-    <option value="">Choisir...</option>
-    <c:forEach var="utilisateur" items="${utilisateurs}">
-        <option value="${utilisateur.id}" ${opportunite.responsable_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
-    </c:forEach>
-</select>
-                               
-                            </div>
-                            <div class="input-group">
-                                <label for="membre1">Membre 1</label>
-                                <select id="membre1" name="membre1" class="form-control">
+                                <label for="responsable">Responsable du projet</label>
+                                <select id="responsable" name="responsable" class="form-control" required>
                                     <option value="">Choisir...</option>
                                     <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}" ${opportunite.membre1_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
                                     </c:forEach>
                                 </select>
                             </div>
-                            <div class="input-group">
-                                <label for="membre2">Membre 2</label>
-                                <select id="membre2" name="membre2" class="form-control">
-                                    <option value="">Choisir...</option>
-                                    <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}" ${opportunite.membre2_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
-                                    </c:forEach>
-                                </select>
+
+                            <!-- Membres dynamiques -->
+                            <div id="membres-wrapper">
+                                <label for="responsable">Membres du projet</label>
+                                <div id="membre-template" style="display: none;">
+                                <div class="membre-row input-group">
+                                    <select name="membres" class="form-control">
+                                        <option value="">Choisir...</option>
+                                        <c:forEach var="utilisateur" items="${utilisateurs}">
+                                            <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <button type="button" class="btn-remove" onclick="removeMembre(this)">−</button>
+                                </div>
                             </div>
-                            <div class="input-group">
-                                <label for="membre3">Membre 3</label>
-                                <select id="membre3" name="membre3" class="form-control">
-                                    <option value="">Choisir...</option>
-                                    <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}" ${opportunite.membre3_id == utilisateur.id ? 'selected' : ''}>${utilisateur.nom} ${utilisateur.prenom}</option>
-                                    </c:forEach>
-                                </select>
                             </div>
+
+                            <button type="button" class="btn-secondary" onclick="addMembre()">+ Ajouter un membre</button>
                         </div>
                     </div>
                     <div class="btn-container">
@@ -498,6 +510,20 @@
             }
             return true;
         }
+        function addMembre() {
+    const wrapper = document.getElementById("membres-wrapper");
+    const template = document.querySelector("#membre-template .membre-row");
+
+    // Cloner le contenu du modèle
+    const newMembre = template.cloneNode(true);
+    wrapper.appendChild(newMembre);
+}
+
+        function removeMembre(button) {
+            const row = button.closest('.membre-row');
+            row.remove();
+        }
+
     </script>
 </body>
 </html>

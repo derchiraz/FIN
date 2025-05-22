@@ -15,6 +15,27 @@
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/projet.css">
     <!-- Icons pour la sidebar -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+    .membre-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .btn-remove {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .btn-remove:hover {
+        background-color: #c0392b;
+    }
+    </style>
 </head>
 <body>
     <!-- Header principal -->
@@ -221,9 +242,9 @@
                                     <option value="">Sélectionnez un status</option>
                                     
                                     <option value="enCours" >En cours</option>
-                                    <option value="terminée">Terminée</option>
+                                    <option value="termine">Terminée</option>
                                     <option value="enAttente">En attente</option>
-                                    <option value="clôturée" >Clôturée</option>
+                                    <option value="cloturee" >Clôturée</option>
                                 </select>
                             </div>
                         </div>
@@ -275,41 +296,32 @@
                         <div class="form-section">
                             <h4 class="section-title">Suivi Interne</h4>
                                 <div class="input-group">
-                                    <label for="responsable">Responsable</label>
-                                       <select id="responsable" name="responsable" class="form-control" required>
-                                          <option value="">Choisir...</option>
-                                              <c:forEach var="utilisateur" items="${utilisateurs}">
-                                                 <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                                              </c:forEach>
-                                        </select>
+                                <label for="responsable">Responsable du projet</label>
+                                <select id="responsable" name="responsable" class="form-control" required>
+                                    <option value="">Choisir...</option>
+                                    <c:forEach var="utilisateur" items="${utilisateurs}">
+                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                    </c:forEach>
+                                </select>
+                            </div>
+
+                            <!-- Membres dynamiques -->
+                            <div id="membres-wrapper">
+                                <label>Membres du projet</label>
+                                <div id="membre-template" style="display: none;">
+                                <div class="membre-row input-group">
+                                    <select name="membres" class="form-control">
+                                        <option value="">Choisir...</option>
+                                        <c:forEach var="utilisateur" items="${utilisateurs}">
+                                            <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
+                                        </c:forEach>
+                                    </select>
+                                    <button type="button" class="btn-remove" onclick="removeMembre(this)">−</button>
                                 </div>
-                            <div class="input-group">
-                                <label for="membre1">Membre 1</label>
-                                <select id="membre1" name="membre1" class="form-control">
-                                    <option value="">Choisir...</option>
-                                    <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                                    </c:forEach>
-                                </select>
                             </div>
-                            <div class="input-group">
-                                <label for="membre2">Membre 2</label>
-                                <select id="membre2" name="membre2" class="form-control">
-                                    <option value="">Choisir...</option>
-                                    <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                                    </c:forEach>
-                                </select>
                             </div>
-                            <div class="input-group">
-                                <label for="membre3">Membre 3</label>
-                                <select id="membre3" name="membre3" class="form-control">
-                                    <option value="">Choisir...</option>
-                                    <c:forEach var="utilisateur" items="${utilisateurs}">
-                                        <option value="${utilisateur.id}">${utilisateur.nom} ${utilisateur.prenom}</option>
-                                    </c:forEach>
-                                </select>
-                            </div>
+
+                            <button type="button" class="btn-secondary" onclick="addMembre()">+ Ajouter un membre</button>
                         </div>
                     </div>
 
@@ -627,7 +639,22 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
 });
+function addMembre() {
+    const wrapper = document.getElementById("membres-wrapper");
+    const template = document.querySelector("#membre-template .membre-row");
+
+    // Cloner le contenu du modèle
+    const newMembre = template.cloneNode(true);
+    wrapper.appendChild(newMembre);
+}
+
+        function removeMembre(button) {
+            const row = button.closest('.membre-row');
+            row.remove();
+        }
+
         
     </script>
 </body>

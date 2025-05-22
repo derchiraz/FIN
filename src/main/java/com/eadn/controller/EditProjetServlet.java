@@ -53,6 +53,7 @@ public class EditProjetServlet extends HttpServlet {
             Long id = Long.parseLong(idStr);
             System.out.println("Récupération du projet avec ID: " + id);
             
+            
             // Charger le projet
             Projet projet = projetService.findById(id);
             if (projet == null) {

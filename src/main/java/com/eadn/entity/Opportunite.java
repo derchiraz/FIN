@@ -267,7 +267,7 @@ public class Opportunite implements Serializable {
         this.nom_contact = contact;
     }
 
-    public void setResponsable_id(Long responsableId) {
+    public void setResponsable(Long responsable) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

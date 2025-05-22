@@ -1,6 +1,6 @@
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ListeRessourceServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ProjetServlet.java
-C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\TimeSheet.java
+C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\Timesheet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ResetPasswordServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\DeleteRessourceServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\HomeServlet.java
@@ -8,7 +8,6 @@ C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\ent
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\EditRessourceServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ForgotPasswordServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\UserService.java
-C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\dao\UserDAO.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\UpdateRessourceServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\TimesheetServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\UtilisateurService.java
@@ -21,7 +20,6 @@ C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\con
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\SupprimerOpportuniteServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ListeProjetServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\UpdateOpportuniteServlet.java
-C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\CompteService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\EmailService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\Projet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\DetailsRessourceServlet.java
@@ -32,7 +30,6 @@ C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\con
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\ProjetService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\mycompany\test\resources\JakartaEE10Resource.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\ValiderProjetServlet.java
-C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\dao\TimeEntryDAO.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\User.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\HomeService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\Coordonnee.java
@@ -40,7 +37,7 @@ C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\con
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\CoordonneeService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\EditOpportuniteServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\RessourceServlet.java
-C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\TimeSheetService.java
+C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\service\TimesheetService.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\EditProjetServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\controller\OpportuniteServlet.java
 C:\Users\L13\Downloads\test-20250429T165547Z-001\test\src\main\java\com\eadn\entity\PasswordReset.java

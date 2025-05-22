@@ -1,4 +1,3 @@
-
 <%-- 
     Document   : detailProjet
     Created on : 5 mai 2025, 00:30:00
@@ -76,7 +75,7 @@
                         </a>
                         <ul class="submenu show" id="project-submenu">
                             <li>
-                                <a href="${pageContext.request.contextPath}/views/projet.jsp">
+                                <a href="${pageContext.request.contextPath}/load-form-data?page=projet">
                                     <i class="fas fa-plus-circle"></i> Ajouter projet
                                 </a>
                             </li>
@@ -156,7 +155,6 @@
                         <h1>Détails du Projet</h1>
                         <div class="header-actions">
                             <button class="btn-action" onclick="window.location.href='${pageContext.request.contextPath}/projet/edit?id=${projet.id}'">
-                    
                                 <i class="fas fa-edit"></i> Modifier
                             </button>
                             <button type="button" class="btn-action btn-danger" onclick="confirmerSuppression(${projet.id})">
@@ -178,14 +176,28 @@
                         <p><strong>Statut :</strong> 
                             <span class="status-badge 
                                 <c:choose>
-                                    <c:when test="${projet.status eq 'En cours'}">status-progress</c:when>
-                                    <c:when test="${projet.status eq 'Terminé'}">status-completed</c:when>
-                                    <c:when test="${projet.status eq 'En attente'}">status-pending</c:when>
+                                    <c:when test="${projet.status eq 'enCours'}">status-progress</c:when>
+                                    <c:when test="${projet.status eq 'terminée'}">status-completed</c:when>
+                                    <c:when test="${projet.status eq 'enAttente'}">status-pending</c:when>
+                                    <c:when test="${projet.status eq 'clôturée'}">status-cancelled</c:when>
                                     <c:otherwise>status-pending</c:otherwise>
                                 </c:choose>
                             ">
-                                ${projet.status}
+                                <c:choose>
+                                    <c:when test="${projet.status eq 'enCours'}">En cours</c:when>
+                                    <c:when test="${projet.status eq 'terminée'}">Terminé</c:when>
+                                    <c:when test="${projet.status eq 'enAttente'}">En attente</c:when>
+                                    <c:when test="${projet.status eq 'clôturée'}">Clôturé</c:when>
+                                    <c:otherwise>${projet.status}</c:otherwise>
+                                </c:choose>
                             </span>
+                        </p>
+                        
+                        <p><strong>Progression :</strong> 
+                            <div class="progress-bar">
+                                <div class="progress" style="width: ${projet.progression}%"></div>
+                                <span class="progress-text">${projet.progression}%</span>
+                            </div>
                         </p>
                     </div>
 
@@ -194,7 +206,7 @@
                         <p><strong>Date de début :</strong> <fmt:formatDate value="${projet.dateDebut}" pattern="dd/MM/yyyy" /></p>
                         <p><strong>Date de fin :</strong> <fmt:formatDate value="${projet.dateFin}" pattern="dd/MM/yyyy" /></p>
                         <p><strong>Durée (jours) :</strong> ${projet.dureeEnJours}</p>
-                        <p><strong>Budget :</strong> <fmt:formatNumber value="${projet.budget}"  type="currency" currencySymbol="DA"/></p>
+                        <p><strong>Budget :</strong> <fmt:formatNumber value="${projet.budget}" type="currency" currencySymbol="DA"/></p>
                     </div>
                 </div>
 
@@ -209,6 +221,19 @@
                             </c:forEach>
                             ${projet.responsable == null ? 'Non assigné' : ''}
                         </p>
+                        
+                        <p><strong>Membres :</strong></p> 
+                        <c:if test="${not empty membresProjets}">
+    <ul>
+        <c:forEach var="membre" items="${membresProjets}">
+            <li>${membre.nom} ${membre.prenom}</li>
+        </c:forEach>
+    </ul>
+</c:if>
+
+                        <c:if test="${empty membresProjets}">
+                            <p class="text-muted">Aucun membre assigné</p>
+                        </c:if>
                     </div>
                 </div>
 
@@ -239,6 +264,22 @@
         </div>
     </div>
 
+    <!-- Notification toast -->
+    <div class="toast-container">
+        <div class="toast" id="toast-success">
+            <div class="toast-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="toast-content">
+                <div class="toast-title">Succès!</div>
+                <div class="toast-message">L'opération a été effectuée avec succès.</div>
+            </div>
+            <button class="toast-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <!-- JavaScript pour la page -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -253,6 +294,15 @@
             
             // Initialiser la modale de suppression
             initDeleteModal();
+            
+            // Initialiser les toasts de notification
+            initToasts();
+            
+            // Afficher la notification de succès si demandé
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('success') === 'true') {
+                showToast('toast-success');
+            }
         });
         
         /**
@@ -362,6 +412,35 @@
                     fermerModal();
                 }
             });
+        }
+        
+        /**
+         * Initialise les toasts de notification
+         */
+        function initToasts() {
+            const toasts = document.querySelectorAll('.toast');
+            
+            toasts.forEach(function(toast) {
+                const closeBtn = toast.querySelector('.toast-close');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', function() {
+                        toast.classList.remove('show');
+                    });
+                }
+            });
+        }
+        
+        /**
+         * Affiche un toast de notification
+         */
+        function showToast(toastId) {
+            const toast = document.getElementById(toastId);
+            if (toast) {
+                toast.classList.add('show');
+                setTimeout(function() {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
         }
         
         /**

@@ -55,6 +55,8 @@ public class ListeProjetServlet extends HttpServlet {
             List<Utilisateur> utilisateurs = utilisateurService.findAll();
             System.out.println("Nombre d'utilisateurs trouvés : " + utilisateurs.size());
             
+            
+            
             // Afficher les détails des projets pour le débogage
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             for (Projet p : projets) {
@@ -67,7 +69,8 @@ public class ListeProjetServlet extends HttpServlet {
                 System.out.println("Date Fin: " + (p.getDateFin() != null ? sdf.format(p.getDateFin()) : "null"));
                 System.out.println("Budget: " + p.getBudget());
                 System.out.println("Statut: " + p.getStatus());
-                System.out.println("Responsable: " + p.getUtilisateur() );
+                System.out.println("Progression: " + (p.getProgression() != null ? p.getProgression() + "%" : "Non définie"));
+                System.out.println("Responsable: " + p.getResponsable());
                 System.out.println("==============================================");
             }
             

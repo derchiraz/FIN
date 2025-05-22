@@ -1,16 +1,15 @@
 com\eadn\entity\Utilisateur.class
 com\eadn\service\HomeService.class
+com\eadn\service\TimesheetService.class
 com\eadn\entity\Coordonnee.class
 com\eadn\service\UtilisateurService.class
 com\eadn\controller\RessourceServlet.class
-com\eadn\dao\TimeEntryDAO.class
 com\eadn\controller\DeleteRessourceServlet.class
 com\eadn\controller\LoginServlet.class
 com\eadn\entity\User.class
 com\eadn\entity\Opportunite.class
 com\eadn\controller\FormDataLoaderServlet.class
 com\eadn\controller\AfficherFormulaireProjetServlet.class
-com\eadn\service\TimeSheetService.class
 com\eadn\service\RessourceService.class
 com\eadn\controller\SignupServlet.class
 com\mycompany\test\resources\JakartaEE10Resource.class
@@ -22,10 +21,9 @@ com\eadn\controller\OpportuniteServlet.class
 com\eadn\controller\ValiderProjetServlet.class
 com\eadn\service\EmailService$1.class
 com\eadn\controller\UpdateRessourceServlet.class
-com\eadn\service\CompteService.class
 com\eadn\controller\HomeServlet.class
-com\eadn\entity\TimeSheet.class
 com\eadn\service\OpportuniteService.class
+com\eadn\entity\Timesheet.class
 com\eadn\controller\EditProjetServlet.class
 com\eadn\controller\DeleteProjetServlet.class
 com\eadn\service\ProjetService.class
@@ -43,7 +41,6 @@ com\eadn\service\EmailService.class
 com\eadn\controller\DetailsRessourceServlet.class
 com\eadn\controller\ForgotPasswordServlet.class
 com\eadn\controller\ListeRessourceServlet.class
-com\eadn\dao\UserDAO.class
 com\eadn\entity\Ressource.class
 com\eadn\controller\DetailsOpportuniteServlet.class
 com\eadn\controller\UpdateOpportuniteServlet.class

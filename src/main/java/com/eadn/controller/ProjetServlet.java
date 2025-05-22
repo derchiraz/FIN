@@ -1,7 +1,9 @@
 package com.eadn.controller;
 
 import com.eadn.entity.Projet;
+import com.eadn.entity.Utilisateur;
 import com.eadn.service.ProjetService;
+import com.eadn.service.UtilisateurService;
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -10,12 +12,19 @@ import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @WebServlet("/projet/save")
 public class ProjetServlet extends HttpServlet {
 
     @Inject
     private ProjetService service;
+    
+    @Inject
+    private UtilisateurService utilisateurService;
+    
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -30,11 +39,15 @@ public class ProjetServlet extends HttpServlet {
             p.setNomCourt(request.getParameter("nomCourt"));
             p.setDescription(request.getParameter("description"));
             
-            //p.setResponsable(request.getParameter("responsable"));
+            p.setResponsable(request.getParameter("responsable"));
             p.setStatus(request.getParameter("status")); // Important: utiliser statut et non status
             
-           
-            
+            if (utilisateurService == null) {
+                System.err.println("ERREUR CRITIQUE: UtilisateurService n'est pas injecté !");
+                response.sendRedirect(request.getContextPath() + "/projet/liste?erreur=service_non_disponible");
+                return;
+            }
+          
             // Valeurs numériques
             String budgetStr = request.getParameter("budget");
             if (budgetStr != null && !budgetStr.isEmpty()) {
@@ -58,7 +71,28 @@ public class ProjetServlet extends HttpServlet {
                     p.setDureeEnJours((int) (diff / (1000 * 60 * 60 * 24)));
                 }
             }
+            // Récupération de la progression
+              String progressionStr = request.getParameter("progression");
+if (progressionStr != null && !progressionStr.isEmpty()) {
+    p.setProgression(Integer.parseInt(progressionStr));
+}
+
+            // Charger la liste des utilisateurs pour le choix du responsable
+            List<Utilisateur> utilisateurs = utilisateurService.findAll();
+            request.setAttribute("utilisateurs", utilisateurs);
             
+              String[] membresIds = request.getParameterValues("membresIds");
+Set<Utilisateur> membres = new HashSet<>();
+
+if (membresIds != null) {
+    for (String idStr : membresIds) {
+        Long userId = Long.parseLong(idStr);
+        Utilisateur u = utilisateurService.findById(userId);
+        membres.add(u);
+    }
+}
+    p.setMembres(membres);
+
            
             
             // Sauvegarde avec logs détaillés

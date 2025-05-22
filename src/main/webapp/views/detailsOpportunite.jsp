@@ -118,7 +118,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="${pageContext.request.contextPath}/ressource/liste">
+                                <a href="${pageContext.request.contextPath}/views/listeRessources.jsp">
                                     <i class="fas fa-users-cog"></i> liste des employés
                                 </a>
                             </li>
@@ -171,26 +171,36 @@
                     <div class="form-section">
                         <h4 class="section-title">Informations de base</h4>
                         <p><strong>Nom de l'opportunité :</strong> ${opportunite.nom_opportunite}</p>
-                        <p><strong>Statut</strong> ${opportunite.status}</p>
+                        <p><strong>Statut :</strong> ${opportunite.status}</p>
+                        <p><strong>Description :</strong> ${opportunite.description_opportunite}</p>
                     </div>
                  
                     <div class="form-section">
                         <h4 class="section-title">Informations Client</h4>
                         <p><strong>Entreprise :</strong> ${opportunite.nom_entreprise}</p>
-                        <p><strong>Contact :</strong>${opportunite.nom_contact}</p>
+                        <p><strong>Contact :</strong> ${opportunite.nom_contact}</p>
+                        <p><strong>Téléphone :</strong> ${opportunite.telephone}</p>
+                        <p><strong>Email :</strong> ${opportunite.email}</p>
+                        <p><strong>Adresse :</strong> ${opportunite.adresse}</p>
                     </div>
                 </div>
               
-
                 <div class="form-container">
                     <div class="form-section">
                         <h4 class="section-title">Période et Budget</h4>
                         <p><strong>Date de début :</strong> <fmt:formatDate value="${opportunite.dateDebut}" pattern="dd/MM/yyyy" /></p>
                         <p><strong>Date de fin :</strong> <fmt:formatDate value="${opportunite.dateFin}" pattern="dd/MM/yyyy" /></p>
-                        <p><strong>Budget estimé :</strong><fmt:formatNumber value="${opportunite.budget_estime}" type="currency" currencySymbol="DA" /></p>     
+                        <p><strong>Budget estimé :</strong> <fmt:formatNumber value="${opportunite.budget_estime}" type="currency" currencySymbol="DA" /></p>     
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4 class="section-title">Objectifs et Architecture</h4>
+                        <p><strong>Objectifs principaux :</strong> ${opportunite.objectifs_principaux}</p>
+                        <p><strong>Description de l'architecture :</strong> ${opportunite.description_architecture}</p>
                     </div>
                 </div>
-                    <div class="form-container">
+                
+                <div class="form-container">
                     <div class="form-section">
                         <h4 class="section-title">Équipe</h4>
                         <p><strong>Responsable :</strong> 
@@ -201,30 +211,23 @@
                             </c:forEach>
                             ${opportunite.responsable == null ? 'Non assigné' : ''}
                         </p>
-                        <p><strong>Membre 1 :</strong> 
-                            <c:forEach var="utilisateur" items="${utilisateurs}">
-                                <c:if test="${utilisateur.id == opportunite.membre1}">
-                                    ${utilisateur.nom} ${utilisateur.prenom}
-                                </c:if>
-                            </c:forEach>
-                            ${opportunite.membre1 == null ? 'Non assigné' : ''}
-                        </p>
-                        <p><strong>Membre 2 :</strong> 
-                            <c:forEach var="utilisateur" items="${utilisateurs}">
-                                <c:if test="${utilisateur.id == opportunite.membre2}">
-                                    ${utilisateur.nom} ${utilisateur.prenom}
-                                </c:if>
-                            </c:forEach>
-                            ${opportunite.membre2 == null ? 'Non assigné' : ''}
-                        </p>
-                        <p><strong>Membre 3 :</strong> 
-                            <c:forEach var="utilisateur" items="${utilisateurs}">
-                                <c:if test="${utilisateur.id == opportunite.membre3}">
-                                    ${utilisateur.nom} ${utilisateur.prenom}
-                                </c:if>
-                            </c:forEach>
-                            ${opportunite.membre3 == null ? 'Non assigné' : ''}
-                        </p>
+                        <p><strong>Membres :</strong></p> 
+                        <c:if test="${not empty membresProjets}">
+                            <ul class="membre-list">
+                                <c:forEach var="membre" items="${membresProjets}">
+                                    <li>
+                                        <c:forEach var="utilisateur" items="${utilisateurs}">
+                                            <c:if test="${utilisateur.id == membre.utilisateurId}">
+                                                ${utilisateur.nom} ${utilisateur.prenom}
+                                            </c:if>
+                                        </c:forEach>
+                                    </li>
+                                </c:forEach>
+                            </ul>
+                        </c:if>
+                        <c:if test="${empty membresProjets}">
+                            <p class="text-muted">Aucun membre assigné</p>
+                        </c:if>
                     </div>
                 </div>
 
